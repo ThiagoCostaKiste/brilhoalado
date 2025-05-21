@@ -1,6 +1,4 @@
-# Atualizando o template HTML com informações fornecidas pelo usuário
-
-html_custom = """
+html_with_image = """
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -26,6 +24,11 @@ html_custom = """
             margin: 20px auto;
             max-width: 400px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .produto img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
         button {
             background-color: #a3d2ff;
@@ -56,6 +59,7 @@ html_custom = """
     <h1>Brilho Alado</h1>
 
     <div class="produto">
+        <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino">
         <h3>Vela Aromática Cappuccino</h3>
         <p>R$ 65,00</p>
         <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65)">Adicionar</button>
@@ -100,10 +104,3 @@ html_custom = """
 </body>
 </html>
 """
-
-# Salvando o novo arquivo
-file_path_custom = "/mnt/data/brilho_alado_catalogo.html"
-with open(file_path_custom, "w", encoding="utf-8") as f:
-    f.write(html_custom)
-
-file_path_custom
