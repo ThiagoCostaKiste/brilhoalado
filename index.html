@@ -143,6 +143,7 @@
     <p>Agradecemos o seu interesse em nossas velas artesanais.</p>
     <p>Algumas velas permitem personalizações de cor, essência e tamanho, enquanto outras têm características fixas para garantir qualidade e identidade.</p>
     <p>Sinta-se à vontade para explorar nosso catálogo e montar seu pedido com carinho. Quando estiver pronto, envie para nós via WhatsApp! 💙</p>
+    <p>🧵 Por serem produtos 100% artesanais, podem ocorrer pequenas variações em acabamentos e cores — o que torna cada vela única e especial. 💙</p>
     <button onclick="fecharBoasVindas()">Entendi</button>
   </div>
 </div>
@@ -237,6 +238,52 @@
   </div>
   <button class="btn" onclick="adicionarLove()">Adicionar</button>
 </div>
+
+  <!-- Vela Recordação -->
+<div class="produto">
+  <div class="slider">
+    <img src="imagens/Vela_Recordacao.jpg" class="active" alt="Vela Recordação">
+    <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
+  </div>
+  <div class="slider-controls">
+    <button onclick="prevSlide()">◀</button>
+    <button onclick="nextSlide()">▶</button>
+  </div>
+  <h3>Vela Recordação</h3>
+  <p>Tamanho: 80g</p>
+  <p>Preço: 1 unidade por R$ 30, 2 ou mais por R$ 25 cada</p>
+  <label for="essencia_recordacao">Escolha a essência:</label>
+  <select id="essencia_recordacao" class="btn">
+    <option value="">-- Selecione --</option>
+    <option>Algodão</option>
+    <option>Baunilha</option>
+    <option>Bergamota</option>
+    <option>Café com Chocolate</option>
+    <option>Canela</option>
+    <option>Cappuccino</option>
+    <option>Capim Limão</option>
+    <option>Cassis e Hibisco</option>
+    <option>Cereja e Avelã</option>
+    <option>Chá Verde</option>
+    <option>Flor de Cerejeira</option>
+    <option>Folhas de Figo</option>
+    <option>Lavanda Francesa</option>
+    <option>Melancia</option>
+    <option>Morango</option>
+    <option>Mousse de Maracujá</option>
+    <option>Oceano</option>
+    <option>Pistache</option>
+    <option>Rosas</option>
+    <option>Zimbro e Madeira Guaiac</option>
+  </select>
+  <div class="quantidade">
+    <button class="btn" onclick="alterarQtd('recordacao', -1)">-</button>
+    <input type="number" id="quantidade_recordacao" value="1" min="1">
+    <button class="btn" onclick="alterarQtd('recordacao', 1)">+</button>
+  </div>
+  <button class="btn" onclick="adicionarRecordacao()">Adicionar</button>
+</div>
+
 <!-- Carrinho -->
 <div class="carrinho">
   <h2>Seu Pedido:</h2>
@@ -310,6 +357,18 @@
     carrinho.push({ nome: "Vela Love", preco: 40, tamanho: "110g", essencia, cor, quantidade });
     atualizarCarrinho();
   }
+  
+function adicionarRecordacao() {
+  const essencia = document.getElementById("essencia_recordacao").value;
+  const quantidade = parseInt(document.getElementById("quantidade_recordacao").value);
+  if (!essencia) {
+    alert("Por favor, selecione a essência.");
+    return;
+  }
+  const preco = quantidade >= 2 ? 25 : 30;
+  carrinho.push({ nome: "Vela Recordação", preco, tamanho: "80g", essencia, cor: "", quantidade });
+  atualizarCarrinho();
+}
 
   function removerItem(index) {
     carrinho.splice(index, 1);
