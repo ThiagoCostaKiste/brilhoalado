@@ -12,10 +12,6 @@
       margin: 0;
       padding: 20px;
     }
-    h1 {
-      text-align: center;
-      color: #5f9ea0;
-    }
     .produto, .carrinho {
       background-color: #fff;
       border: 1px solid #dfe6e9;
@@ -25,33 +21,7 @@
       max-width: 500px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    .produto img {
-      display: block;
-      margin: 0 auto 10px;
-      width: 60%;
-      border-radius: 8px;
-    }
-    .slider img {
-      width: 60%;
-      display: none;
-      margin: 0 auto;
-      border-radius: 8px;
-    }
-    .slider img.active {
-      display: block;
-    }
     .produto h3, .produto p {
-      text-align: center;
-    }
-    .quantidade {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 10px 0;
-    }
-    .quantidade input {
-      width: 50px;
       text-align: center;
     }
     select, .btn {
@@ -64,10 +34,44 @@
       border: 1px solid #a3d2ff;
       color: #004080;
       cursor: pointer;
-      transition: background-color 0.2s;
+    }
+    .quantidade {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .quantidade input {
+      width: 50px;
+      text-align: center;
     }
     .btn:hover {
       background-color: #b3ddff;
+    }
+    .carousel-box {
+      position: relative;
+      text-align: center;
+    }
+    .carousel-box img {
+      width: 60%;
+      border-radius: 8px;
+      display: none;
+    }
+    .carousel-box img.active {
+      display: block;
+    }
+    .carousel-nav {
+      margin-top: 10px;
+    }
+    .carousel-nav button {
+      background-color: #a3d2ff;
+      border: none;
+      padding: 5px 10px;
+      margin: 0 5px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
     }
     .remover {
       background-color: #ffb3b3;
@@ -78,121 +82,26 @@
       background-color: #ffc9c9;
       margin-top: 10px;
     }
-    .slider {
-      position: relative;
-      max-width: 100%;
-      margin: 0 auto 15px;
-      overflow: hidden;
-    }
-    .slider-controls {
-      text-align: center;
-      margin-top: 10px;
-    }
-    .slider-controls button {
-      background-color: #a3d2ff;
-      border: none;
-      padding: 5px 10px;
-      margin: 0 5px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .modal-bemvindo {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-    .modal-conteudo {
-      background-color: #e6f3ff;
-      color: #003366;
-      padding: 25px;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-      font-size: 16px;
-    }
-    .modal-conteudo button {
-      margin-top: 15px;
-      background-color: #a3d2ff;
-      color: #003366;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .modal-conteudo button:hover {
-      background-color: #bde4ff;
-    }
   </style>
 </head>
 <body>
-<!-- Pop-up de boas-vindas -->
-<div id="popupBoasVindas" class="modal-bemvindo">
-  <div class="modal-conteudo">
-    <p>🕯️ <strong>Bem-vindo à Brilho Alado!</strong></p>
-    <p>Agradecemos o seu interesse em nossas velas artesanais.</p>
-    <p>Algumas velas permitem personalizações de cor, essência e tamanho, enquanto outras têm características fixas para garantir qualidade e identidade.</p>
-    <p>Sinta-se à vontade para explorar nosso catálogo e montar seu pedido com carinho. Quando estiver pronto, envie para nós via WhatsApp! 💙</p>
-    <p>🧵 Por serem produtos 100% artesanais, podem ocorrer pequenas variações em acabamentos e cores — o que torna cada vela única e especial. 💙</p>
-    <button onclick="fecharBoasVindas()">Entendi</button>
-  </div>
-</div>
 
-<h1>Brilho Alado</h1>
+<h1 style="text-align:center;">Brilho Alado</h1>
 
-<!-- Vela Cappuccino -->
+<!-- Vela Love -->
 <div class="produto">
-  <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino">
-  <h3>Vela Aromática Cappuccino</h3>
-  <p>Tamanho: 140g - R$ 65,00</p>
-  <p>Essência: Cappuccino</p>
-  <div class="quantidade">
-    <button class="btn" onclick="alterarQtd('cappuccino', -1)">-</button>
-    <input type="number" id="quantidade_cappuccino" value="1" min="1">
-    <button class="btn" onclick="alterarQtd('cappuccino', 1)">+</button>
-  </div>
-  <button class="btn" onclick="adicionarCarrinho('Vela Aromática Cappuccino', 65, '140g', 'Cappuccino', '', 'quantidade_cappuccino')">Adicionar</button>
-</div>
-
-<!-- Vela Melancia -->
-<div class="produto">
-  <img src="imagens/Vela_Melancia.jpg" alt="Vela Melancia">
-  <h3>Vela Melancia</h3>
-  <p>Tamanhos disponíveis:</p>
-  <select id="tamanho_melancia" class="btn">
-    <option value="180g|50">180g - R$ 50,00</option>
-    <option value="100g|45">100g - R$ 45,00</option>
-  </select>
-  <p>Essência: Melancia</p>
-  <div class="quantidade">
-    <button class="btn" onclick="alterarQtd('melancia', -1)">-</button>
-    <input type="number" id="quantidade_melancia" value="1" min="1">
-    <button class="btn" onclick="alterarQtd('melancia', 1)">+</button>
-  </div>
-  <button class="btn" onclick="adicionarMelancia()">Adicionar</button>
-</div>
-
-<div class="produto">
-  <details open>
-    <summary>Vela Love</summary>
-    <div class="carousel">
-      <img src="imagens/Vela_Love.jpg" alt="Vela Love">
-      <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
-      <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+  <h3>Vela Love</h3>
+  <div class="carousel-box" id="carousel-love">
+    <img src="imagens/Vela_Love.jpg" class="active" alt="Vela Love 1">
+    <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
+    <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+    <div class="carousel-nav">
+      <button onclick="prevSlide('love')">◀</button>
+      <button onclick="nextSlide('love')">▶</button>
     </div>
-  </details>
-  <p style="text-align:center;">Tamanho: 110g - R$ 40,00</p>
-  <label for="essencia_love">Escolha a essência:</label>
+  </div>
+  <p>Tamanho: 110g - R$ 40,00</p>
+  <label>Escolha a essência:</label>
   <select id="essencia_love" class="btn">
     <option value="">-- Selecione --</option>
     <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
@@ -203,7 +112,7 @@
     <option>Mousse de Maracujá</option><option>Oceano</option><option>Pistache</option>
     <option>Rosas</option><option>Zimbro e Madeira Guaiac</option>
   </select>
-  <label for="cor_love">Escolha a cor:</label>
+  <label>Escolha a cor:</label>
   <select id="cor_love" class="btn">
     <option value="">-- Selecione --</option>
     <option>Branco</option><option>Vermelho</option><option>Rosa</option>
@@ -216,18 +125,21 @@
   </div>
   <button class="btn" onclick="adicionarLove()">Adicionar</button>
 </div>
-  
+
+<!-- Vela Recordação -->
 <div class="produto">
-  <details open>
-    <summary>Vela Recordação</summary>
-    <div class="carousel">
-      <img src="imagens/Vela_Recordacao.jpg" alt="Vela Recordação">
-      <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
+  <h3>Vela Recordação</h3>
+  <div class="carousel-box" id="carousel-recordacao">
+    <img src="imagens/Vela_Recordacao.jpg" class="active" alt="Vela Recordação 1">
+    <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
+    <div class="carousel-nav">
+      <button onclick="prevSlide('recordacao')">◀</button>
+      <button onclick="nextSlide('recordacao')">▶</button>
     </div>
-  </details>
-  <p style="text-align:center;">Tamanho: 80g</p>
-  <p style="text-align:center;">1 unidade por R$ 30. A partir de 2 por R$ 25 cada</p>
-  <label for="essencia_recordacao">Escolha a essência:</label>
+  </div>
+  <p>Tamanho: 80g</p>
+  <p>Preço: 1 unid. R$ 30 | 2+ unid. R$ 25 cada</p>
+  <label>Escolha a essência:</label>
   <select id="essencia_recordacao" class="btn">
     <option value="">-- Selecione --</option>
     <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
@@ -245,7 +157,7 @@
   </div>
   <button class="btn" onclick="adicionarRecordacao()">Adicionar</button>
 </div>
-  
+
 <!-- Carrinho -->
 <div class="carrinho">
   <h2>Seu Pedido:</h2>
@@ -255,43 +167,45 @@
   <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
 </div>
 
-  <!-- Carrinho -->
-<div class="carrinho">
-  <h2>Seu Pedido:</h2>
-  <ul id="carrinho"></ul>
-  <p><strong>Total: R$ <span id="total">0</span></strong></p>
-  <button class="limpar-btn" onclick="limparCarrinho()">Limpar Carrinho</button><br><br>
-  <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
-</div>
-
-<!-- Scripts -->
 <script>
   let carrinho = [];
   let total = 0;
 
-  function fecharBoasVindas() {
-    document.getElementById("popupBoasVindas").style.display = "none";
+  const carousels = {
+    love: { index: 0, images: [] },
+    recordacao: { index: 0, images: [] }
+  };
+
+  window.onload = function () {
+    ['love', 'recordacao'].forEach(id => {
+      carousels[id].images = Array.from(document.querySelectorAll(`#carousel-${id} img`));
+      showCarouselImage(id, 0);
+    });
+  };
+
+  function showCarouselImage(id, index) {
+    const imgs = carousels[id].images;
+    imgs.forEach(img => img.classList.remove("active"));
+    imgs[index].classList.add("active");
+    carousels[id].index = index;
+  }
+
+  function nextSlide(id) {
+    const imgs = carousels[id].images;
+    const newIndex = (carousels[id].index + 1) % imgs.length;
+    showCarouselImage(id, newIndex);
+  }
+
+  function prevSlide(id) {
+    const imgs = carousels[id].images;
+    const newIndex = (carousels[id].index - 1 + imgs.length) % imgs.length;
+    showCarouselImage(id, newIndex);
   }
 
   function alterarQtd(id, delta) {
     const input = document.getElementById("quantidade_" + id);
     let novaQtd = parseInt(input.value) + delta;
     input.value = Math.max(1, novaQtd);
-  }
-
-  function adicionarCarrinho(nome, preco, tamanho, essencia, cor, qtdId) {
-    const quantidade = parseInt(document.getElementById(qtdId).value);
-    carrinho.push({ nome, preco, tamanho, essencia, cor, quantidade });
-    atualizarCarrinho();
-  }
-
-  function adicionarMelancia() {
-    const select = document.getElementById("tamanho_melancia").value.split("|");
-    const tamanho = select[0];
-    const preco = parseFloat(select[1]);
-    const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
-    carrinho.push({ nome: "Vela Melancia", preco, tamanho, essencia: "Melancia", cor: "", quantidade });
-    atualizarCarrinho();
   }
 
   function adicionarLove() {
