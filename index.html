@@ -19,21 +19,6 @@
             height: 100%;
             object-fit: cover;
         }
-        .carousel img {
-            aspect-ratio: 9/16;
-            object-fit: cover;
-            max-width: 100%;
-        }
-        .carousel::-webkit-scrollbar {
-            height: 8px;
-        }
-        .carousel::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        .carousel::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
     </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
@@ -74,7 +59,8 @@
                 <img src="" alt="" class="w-full h-full object-cover">
             </div>
             
-            <h2 id="modalTitle" class="text-xl font-semibold mb-4"></h2>
+            <h2 id="modalTitle" class="text-xl font-semibold mb-2"></h2>
+            <p id="modalPrice" class="text-lg font-bold text-blue-600 mb-4"></p>
             <div id="modalContent"></div>
             <button onclick="addToCart()" 
                 class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition mt-4">
@@ -106,7 +92,7 @@
         {
             id: 1,
             name: 'Vela Cappuccino',
-            images: ['/imagens/Vela_Cappuccino.jpg'],
+            images: ['Vela_Cappuccino.jpg'],
             weight: '140g',
             price: 65,
             scent: 'Cappuccino',
@@ -115,7 +101,7 @@
         {
             id: 2,
             name: 'Vela Melancia',
-            images: ['/imagens/Vela_Melancia.jpg'],
+            images: ['Vela_Melancia.jpg'],
             weightOptions: [
                 { value: '100g', price: 45 },
                 { value: '180g', price: 50 }
@@ -126,7 +112,7 @@
         {
             id: 3,
             name: 'Vela Love',
-            images: ['/imagens/Vela_Love.jpg', '/imagens/Vela_Love_2.jpg', '/imagens/Vela_Love_3.jpg'],
+            images: ['Vela_Love.jpg', 'Vela_Love_2.jpg', 'Vela_Love_3.jpg'],
             weight: '110g',
             price: 40,
             scentOptions: [
@@ -141,7 +127,7 @@
         {
             id: 4,
             name: 'Vela Recordação',
-            images: ['/imagens/Vela_Recordacao.jpg', '/imagens/Vela_Recordacao_2.jpg'],
+            images: ['Vela_Recordacao.jpg', 'Vela_Recordacao_2.jpg'],
             weight: '80g',
             basePrice: 30,
             discountPrice: 25,
@@ -171,7 +157,7 @@
             <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
                 <div class="relative">
                     <div class="image-container">
-                        <img src="${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover">
+                        <img src="/imagens/${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover">
                     </div>
                 </div>
                 <div class="p-4 space-y-2">
@@ -183,6 +169,7 @@
                     </p>
                     <p>Essência: ${product.scent || 'Selecione'}</p>
                     <p>Cor: ${product.color || 'Selecione'}</p>
+                    <p class="font-bold text-blue-600">Preço: R$${getProductPrice(product)}</p>
                     <button onclick="openModal(${product.id})"
                         class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition">
                         Ver detalhes
@@ -190,6 +177,14 @@
                 </div>
             </div>
         `).join('');
+    }
+
+    // Calcula preço do produto
+    function getProductPrice(product) {
+        if (product.weightOptions) {
+            return product.weightOptions[0].price; // Exibe primeiro preço como padrão
+        }
+        return product.basePrice || product.price;
     }
 
     // Controle do modal de boas-vindas
@@ -202,11 +197,13 @@
         currentProduct = products.find(p => p.id === productId);
         const modal = document.getElementById('productModal');
         const modalTitle = document.getElementById('modalTitle');
+        const modalPrice = document.getElementById('modalPrice');
         const mainImage = modal.querySelector('.image-container img');
         const modalContent = document.getElementById('modalContent');
 
         modalTitle.textContent = currentProduct.name;
-        mainImage.src = currentProduct.images[0];
+        modalPrice.textContent = `R$${getProductPrice(currentProduct)}`;
+        mainImage.src = `/imagens/${currentProduct.images[0]}`;
 
         // Renderiza opções do produto
         modalContent.innerHTML = `
