@@ -31,6 +31,15 @@
       width: 60%;
       border-radius: 8px;
     }
+    .slider img {
+      width: 60%;
+      display: none;
+      margin: 0 auto;
+      border-radius: 8px;
+    }
+    .slider img.active {
+      display: block;
+    }
     .produto h3, .produto p {
       text-align: center;
     }
@@ -74,15 +83,6 @@
       max-width: 100%;
       margin: 0 auto 15px;
       overflow: hidden;
-      border-radius: 8px;
-    }
-    .slider img {
-      width: 100%;
-      display: none;
-      transition: opacity 0.5s ease-in-out;
-    }
-    .slider img.active {
-      display: block;
     }
     .slider-controls {
       text-align: center;
@@ -190,6 +190,7 @@
   <button class="btn" onclick="adicionarLove()">Adicionar</button>
 </div>
 
+<!-- Carrinho -->
 <div class="carrinho">
   <h2>Seu Pedido:</h2>
   <ul id="carrinho"></ul>
@@ -198,6 +199,7 @@
   <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
 </div>
 
+<!-- Scripts -->
 <script>
 let carrinho = [];
 let total = 0;
@@ -205,6 +207,7 @@ let slideIndex = 0;
 let slides = [];
 
 window.onload = function () {
+  alert("🕯️ Bem-vindo à Brilho Alado!\\n\\nAgradecemos o seu interesse em nossas velas artesanais.\\n\\nAlgumas velas permitem personalizações de cor, essência e tamanho, enquanto outras têm características fixas para garantir qualidade e identidade.\\n\\nSinta-se à vontade para explorar nosso catálogo e montar seu pedido com carinho. Quando estiver pronto, envie para nós via WhatsApp! 💙");
   slides = document.querySelectorAll(".slider img");
   showSlide(0);
 };
