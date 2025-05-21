@@ -97,9 +97,55 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    .modal-bemvindo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    .modal-conteudo {
+      background-color: #e6f3ff;
+      color: #003366;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      font-size: 16px;
+    }
+    .modal-conteudo button {
+      margin-top: 15px;
+      background-color: #a3d2ff;
+      color: #003366;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .modal-conteudo button:hover {
+      background-color: #bde4ff;
+    }
   </style>
 </head>
 <body>
+<!-- Pop-up de boas-vindas -->
+<div id="popupBoasVindas" class="modal-bemvindo">
+  <div class="modal-conteudo">
+    <p>🕯️ <strong>Bem-vindo à Brilho Alado!</strong></p>
+    <p>Agradecemos o seu interesse em nossas velas artesanais.</p>
+    <p>Algumas velas permitem personalizações de cor, essência e tamanho, enquanto outras têm características fixas para garantir qualidade e identidade.</p>
+    <p>Sinta-se à vontade para explorar nosso catálogo e montar seu pedido com carinho. Quando estiver pronto, envie para nós via WhatsApp! 💙</p>
+    <button onclick="fecharBoasVindas()">Entendi</button>
+  </div>
+</div>
 
 <h1>Brilho Alado</h1>
 
@@ -172,6 +218,7 @@
     <option>Rosas</option>
     <option>Zimbro e Madeira Guaiac</option>
   </select>
+
   <label for="cor_love">Escolha a cor:</label>
   <select id="cor_love" class="btn">
     <option value="">-- Selecione --</option>
@@ -182,6 +229,7 @@
     <option>Azul</option>
     <option>Amarelo</option>
   </select>
+
   <div class="quantidade">
     <button class="btn" onclick="alterarQtd('love', -1)">-</button>
     <input type="number" id="quantidade_love" value="1" min="1">
@@ -189,7 +237,6 @@
   </div>
   <button class="btn" onclick="adicionarLove()">Adicionar</button>
 </div>
-
 <!-- Carrinho -->
 <div class="carrinho">
   <h2>Seu Pedido:</h2>
@@ -201,102 +248,107 @@
 
 <!-- Scripts -->
 <script>
-let carrinho = [];
-let total = 0;
-let slideIndex = 0;
-let slides = [];
+  let carrinho = [];
+  let total = 0;
+  let slideIndex = 0;
+  let slides = [];
 
-window.onload = function () {
-  alert("🕯️ Bem-vindo à Brilho Alado!\\n\\nAgradecemos o seu interesse em nossas velas artesanais.\\n\\nAlgumas velas permitem personalizações de cor, essência e tamanho, enquanto outras têm características fixas para garantir qualidade e identidade.\\n\\nSinta-se à vontade para explorar nosso catálogo e montar seu pedido com carinho. Quando estiver pronto, envie para nós via WhatsApp! 💙");
-  slides = document.querySelectorAll(".slider img");
-  showSlide(0);
-};
+  window.onload = function () {
+    slides = document.querySelectorAll(".slider img");
+    showSlide(0);
+  };
 
-function showSlide(index) {
-  slides.forEach((img, i) => {
-    img.classList.remove("active");
-    if (i === index) img.classList.add("active");
-  });
-  slideIndex = index;
-}
-
-function nextSlide() {
-  showSlide((slideIndex + 1) % slides.length);
-}
-
-function prevSlide() {
-  showSlide((slideIndex - 1 + slides.length) % slides.length);
-}
-
-function alterarQtd(id, delta) {
-  const input = document.getElementById("quantidade_" + id);
-  let novaQtd = parseInt(input.value) + delta;
-  input.value = Math.max(1, novaQtd);
-}
-
-function adicionarCarrinho(nome, preco, tamanho, essencia, cor, qtdId) {
-  const quantidade = parseInt(document.getElementById(qtdId).value);
-  carrinho.push({ nome, preco, tamanho, essencia, cor, quantidade });
-  atualizarCarrinho();
-}
-
-function adicionarMelancia() {
-  const select = document.getElementById("tamanho_melancia").value.split("|");
-  const tamanho = select[0];
-  const preco = parseFloat(select[1]);
-  const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
-  carrinho.push({ nome: "Vela Melancia", preco, tamanho, essencia: "Melancia", cor: "", quantidade });
-  atualizarCarrinho();
-}
-
-function adicionarLove() {
-  const essencia = document.getElementById("essencia_love").value;
-  const cor = document.getElementById("cor_love").value;
-  const quantidade = parseInt(document.getElementById("quantidade_love").value);
-  if (!essencia || !cor) {
-    alert("Por favor, selecione a essência e a cor.");
-    return;
+  function fecharBoasVindas() {
+    document.getElementById("popupBoasVindas").style.display = "none";
   }
-  carrinho.push({ nome: "Vela Love", preco: 40, tamanho: "110g", essencia, cor, quantidade });
-  atualizarCarrinho();
-}
 
-function removerItem(index) {
-  carrinho.splice(index, 1);
-  atualizarCarrinho();
-}
+  function showSlide(index) {
+    slides.forEach((img, i) => {
+      img.classList.remove("active");
+      if (i === index) img.classList.add("active");
+    });
+    slideIndex = index;
+  }
 
-function limparCarrinho() {
-  carrinho = [];
-  atualizarCarrinho();
-}
+  function nextSlide() {
+    showSlide((slideIndex + 1) % slides.length);
+  }
 
-function atualizarCarrinho() {
-  const lista = document.getElementById("carrinho");
-  lista.innerHTML = "";
-  total = 0;
-  carrinho.forEach((item, index) => {
-    const subtotal = item.preco * item.quantidade;
-    total += subtotal;
-    const li = document.createElement("li");
-    li.innerHTML =
-      `<strong>${item.quantidade}x ${item.nome}</strong><br>` +
-      `Tamanho: ${item.tamanho}<br>` +
-      `Essência: ${item.essencia}<br>` +
-      (item.cor ? `Cor: ${item.cor}<br>` : "") +
-      `R$ ${subtotal}<br>` +
-      `<button class="remover" onclick="removerItem(${index})">Remover</button>`;
-    lista.appendChild(li);
-  });
-  document.getElementById("total").textContent = total;
+  function prevSlide() {
+    showSlide((slideIndex - 1 + slides.length) % slides.length);
+  }
 
-  let mensagem = "Olá, gostaria de fazer um pedido:%0A";
-  carrinho.forEach(item => {
-    mensagem += `- ${item.quantidade}x ${item.nome} [${item.tamanho}, ${item.essencia}${item.cor ? ", " + item.cor : ""}] - R$ ${item.preco * item.quantidade}%0A`;
-  });
-  mensagem += `Total: R$ ${total}`;
-  document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
-}
+  function alterarQtd(id, delta) {
+    const input = document.getElementById("quantidade_" + id);
+    let novaQtd = parseInt(input.value) + delta;
+    input.value = Math.max(1, novaQtd);
+  }
+
+  function adicionarCarrinho(nome, preco, tamanho, essencia, cor, qtdId) {
+    const quantidade = parseInt(document.getElementById(qtdId).value);
+    carrinho.push({ nome, preco, tamanho, essencia, cor, quantidade });
+    atualizarCarrinho();
+  }
+
+  function adicionarMelancia() {
+    const select = document.getElementById("tamanho_melancia").value.split("|");
+    const tamanho = select[0];
+    const preco = parseFloat(select[1]);
+    const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
+    carrinho.push({ nome: "Vela Melancia", preco, tamanho, essencia: "Melancia", cor: "", quantidade });
+    atualizarCarrinho();
+  }
+
+  function adicionarLove() {
+    const essencia = document.getElementById("essencia_love").value;
+    const cor = document.getElementById("cor_love").value;
+    const quantidade = parseInt(document.getElementById("quantidade_love").value);
+    if (!essencia || !cor) {
+      alert("Por favor, selecione a essência e a cor.");
+      return;
+    }
+    carrinho.push({ nome: "Vela Love", preco: 40, tamanho: "110g", essencia, cor, quantidade });
+    atualizarCarrinho();
+  }
+
+  function removerItem(index) {
+    carrinho.splice(index, 1);
+    atualizarCarrinho();
+  }
+
+  function limparCarrinho() {
+    carrinho = [];
+    atualizarCarrinho();
+  }
+
+  function atualizarCarrinho() {
+    const lista = document.getElementById("carrinho");
+    lista.innerHTML = "";
+    total = 0;
+
+    carrinho.forEach((item, index) => {
+      const subtotal = item.preco * item.quantidade;
+      total += subtotal;
+      const li = document.createElement("li");
+      li.innerHTML =
+        `<strong>${item.quantidade}x ${item.nome}</strong><br>` +
+        `Tamanho: ${item.tamanho}<br>` +
+        `Essência: ${item.essencia}<br>` +
+        (item.cor ? `Cor: ${item.cor}<br>` : "") +
+        `R$ ${subtotal}<br>` +
+        `<button class="remover" onclick="removerItem(${index})">Remover</button>`;
+      lista.appendChild(li);
+    });
+
+    document.getElementById("total").textContent = total;
+
+    let mensagem = "Olá, gostaria de fazer um pedido:%0A";
+    carrinho.forEach(item => {
+      mensagem += `- ${item.quantidade}x ${item.nome} [${item.tamanho}, ${item.essencia}${item.cor ? ", " + item.cor : ""}] - R$ ${item.preco * item.quantidade}%0A`;
+    });
+    mensagem += `Total: R$ ${total}`;
+    document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
+  }
 </script>
 
 </body>
