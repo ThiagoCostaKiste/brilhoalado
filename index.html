@@ -6,9 +6,6 @@
     <title>Brilho Alado - Velas Aromáticas</title>
     <script src="https://cdn.tailwindcss.com "></script>
     <style>
-        .modal {
-            transition: opacity 0.3s;
-        }
         .image-container {
             aspect-ratio: 9/16;
             height: 200px;
@@ -327,18 +324,15 @@
 
         // Renderiza itens
         cart.forEach(item => {
-            const itemTotal = item.id === 4 
-                ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice) * item.quantity
-                : item.price * item.quantity;
+            let pricePerUnit = item.price;
+            if (item.id === 4) {
+                pricePerUnit = recordacaoCount >= 2 ? item.discountPrice : item.basePrice;
+            }
+            const itemTotal = pricePerUnit * item.quantity;
 
             total += itemTotal;
 
             // Nova lógica para exibição do carrinho
-            const isRecordacao = item.id === 4;
-            const pricePerUnit = isRecordacao 
-                ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice)
-                : item.price;
-
             cartItems.innerHTML += `
                 <div class="border-b pb-4 mb-4 last:border-b-0 last:mb-0">
                     <div class="flex justify-between items-center">
@@ -369,7 +363,7 @@
                     <!-- Botão para expandir/detalhar -->
                     <button onclick="toggleDetails(this)" 
                         class="text-xs text-blue-500 hover:text-blue-700 mt-1">
-                        ${item.showDetails ? 'Mostrar menos' : 'Ver detalhes'}
+                        Ver detalhes
                     </button>
                 </div>
             `;
@@ -381,11 +375,13 @@
         // Atualiza link do WhatsApp
         const message = encodeURIComponent(`
             Olá! Gostaria de fazer o seguinte pedido:\n\n
-            ${cart.map(item => 
-                `${item.quantity}x ${item.name} - R$${isRecordacao 
-                    ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice) 
-                    : item.price} cada`
-            ).join('\n')}\n\n
+            ${cart.map(item => {
+                let price = item.price;
+                if (item.id === 4) {
+                    price = recordacaoCount >= 2 ? item.discountPrice : item.basePrice;
+                }
+                return `${item.quantity}x ${item.name} - R$${price} cada`;
+            }).join('\n')}\n\n
             Total: R$${total}
         `).replace(/%20/g, '+');
 
@@ -396,7 +392,7 @@
     function toggleDetails(element) {
         const details = element.parentNode.querySelector('.transition-all');
         details.classList.toggle('max-h-0');
-        details.classList.toggle('max-h-20'); // Ajuste a altura conforme necessário
+        details.classList.toggle('max-h-20');
         element.textContent = element.textContent === 'Ver detalhes' ? 'Mostrar menos' : 'Ver detalhes';
     }
 
