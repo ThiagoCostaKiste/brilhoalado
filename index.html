@@ -13,8 +13,8 @@
       padding: 20px;
     }
     h1 {
-      color: #5f9ea0;
       text-align: center;
+      color: #5f9ea0;
     }
     .produto, .carrinho {
       background-color: #fff;
@@ -45,12 +45,20 @@
       width: 50px;
       text-align: center;
     }
-    select, button {
+    select, .btn {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       border-radius: 5px;
       font-weight: bold;
+      background-color: #cce6ff;
+      border: 1px solid #a3d2ff;
+      color: #004080;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #b3ddff;
     }
     .remover {
       background-color: #ffb3b3;
@@ -60,6 +68,34 @@
     .limpar-btn {
       background-color: #ffc9c9;
       margin-top: 10px;
+    }
+    .slider {
+      position: relative;
+      max-width: 100%;
+      margin: 0 auto 15px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    .slider img {
+      width: 100%;
+      display: none;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .slider img.active {
+      display: block;
+    }
+    .slider-controls {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .slider-controls button {
+      background-color: #a3d2ff;
+      border: none;
+      padding: 5px 10px;
+      margin: 0 5px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -74,11 +110,11 @@
   <p>Tamanho: 140g - R$ 65,00</p>
   <p>Essência: Cappuccino</p>
   <div class="quantidade">
-    <button onclick="alterarQtd('cappuccino', -1)">-</button>
+    <button class="btn" onclick="alterarQtd('cappuccino', -1)">-</button>
     <input type="number" id="quantidade_cappuccino" value="1" min="1">
-    <button onclick="alterarQtd('cappuccino', 1)">+</button>
+    <button class="btn" onclick="alterarQtd('cappuccino', 1)">+</button>
   </div>
-  <button onclick="adicionarCarrinho('Vela Aromática Cappuccino', 65, '140g', 'Cappuccino', '', 'quantidade_cappuccino')">Adicionar</button>
+  <button class="btn" onclick="adicionarCarrinho('Vela Aromática Cappuccino', 65, '140g', 'Cappuccino', '', 'quantidade_cappuccino')">Adicionar</button>
 </div>
 
 <!-- Vela Melancia -->
@@ -86,28 +122,34 @@
   <img src="imagens/Vela_Melancia.jpg" alt="Vela Melancia">
   <h3>Vela Melancia</h3>
   <p>Tamanhos disponíveis:</p>
-  <select id="tamanho_melancia">
+  <select id="tamanho_melancia" class="btn">
     <option value="180g|50">180g - R$ 50,00</option>
     <option value="100g|45">100g - R$ 45,00</option>
   </select>
   <p>Essência: Melancia</p>
   <div class="quantidade">
-    <button onclick="alterarQtd('melancia', -1)">-</button>
+    <button class="btn" onclick="alterarQtd('melancia', -1)">-</button>
     <input type="number" id="quantidade_melancia" value="1" min="1">
-    <button onclick="alterarQtd('melancia', 1)">+</button>
+    <button class="btn" onclick="alterarQtd('melancia', 1)">+</button>
   </div>
-  <button onclick="adicionarMelancia()">Adicionar</button>
+  <button class="btn" onclick="adicionarMelancia()">Adicionar</button>
 </div>
 
 <!-- Vela Love -->
 <div class="produto">
-  <img src="imagens/Vela_Love.jpg" alt="Vela Love">
-  <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
-  <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+  <div class="slider">
+    <img src="imagens/Vela_Love.jpg" class="active" alt="Vela Love">
+    <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
+    <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+  </div>
+  <div class="slider-controls">
+    <button onclick="prevSlide()">◀</button>
+    <button onclick="nextSlide()">▶</button>
+  </div>
   <h3>Vela Love</h3>
   <p>Tamanho: 110g - R$ 40,00</p>
   <label for="essencia_love">Escolha a essência:</label>
-  <select id="essencia_love">
+  <select id="essencia_love" class="btn">
     <option value="">-- Selecione --</option>
     <option>Algodão</option>
     <option>Baunilha</option>
@@ -131,7 +173,7 @@
     <option>Zimbro e Madeira Guaiac</option>
   </select>
   <label for="cor_love">Escolha a cor:</label>
-  <select id="cor_love">
+  <select id="cor_love" class="btn">
     <option value="">-- Selecione --</option>
     <option>Branco</option>
     <option>Vermelho</option>
@@ -141,11 +183,11 @@
     <option>Amarelo</option>
   </select>
   <div class="quantidade">
-    <button onclick="alterarQtd('love', -1)">-</button>
+    <button class="btn" onclick="alterarQtd('love', -1)">-</button>
     <input type="number" id="quantidade_love" value="1" min="1">
-    <button onclick="alterarQtd('love', 1)">+</button>
+    <button class="btn" onclick="alterarQtd('love', 1)">+</button>
   </div>
-  <button onclick="adicionarLove()">Adicionar</button>
+  <button class="btn" onclick="adicionarLove()">Adicionar</button>
 </div>
 
 <div class="carrinho">
@@ -153,12 +195,35 @@
   <ul id="carrinho"></ul>
   <p><strong>Total: R$ <span id="total">0</span></strong></p>
   <button class="limpar-btn" onclick="limparCarrinho()">Limpar Carrinho</button><br><br>
-  <a id="enviar" href="#" target="_blank"><button>Enviar pedido via WhatsApp</button></a>
+  <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
 </div>
 
 <script>
 let carrinho = [];
 let total = 0;
+let slideIndex = 0;
+let slides = [];
+
+window.onload = function () {
+  slides = document.querySelectorAll(".slider img");
+  showSlide(0);
+};
+
+function showSlide(index) {
+  slides.forEach((img, i) => {
+    img.classList.remove("active");
+    if (i === index) img.classList.add("active");
+  });
+  slideIndex = index;
+}
+
+function nextSlide() {
+  showSlide((slideIndex + 1) % slides.length);
+}
+
+function prevSlide() {
+  showSlide((slideIndex - 1 + slides.length) % slides.length);
+}
 
 function alterarQtd(id, delta) {
   const input = document.getElementById("quantidade_" + id);
@@ -230,5 +295,6 @@ function atualizarCarrinho() {
   document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
 }
 </script>
+
 </body>
 </html>
