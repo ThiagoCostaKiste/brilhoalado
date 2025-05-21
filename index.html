@@ -1,3 +1,14 @@
+essencias = [
+    "Algodão", "Baunilha", "Bergamota", "Café com Chocolate", "Canela", "Cappuccino",
+    "Capim Limão", "Cassis e Hibisco", "Cereja e Avelã", "Chá Verde", "Flor de Cerejeira",
+    "Folhas de Figo", "Lavanda Francesa", "Melancia", "Morango", "Mousse de Maracujá",
+    "Oceano", "Pistache", "Rosas", "Zimbro e Madeira Guaiac"
+]
+
+essencias_html = "".join(f'<option value="{e}">{e}</option>' for e in essencias)
+
+# Usar string literal normal para evitar problema de escape
+html_popup_clean = """
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
