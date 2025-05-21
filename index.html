@@ -1,330 +1,326 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <title>Brilho Alado</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f6ff;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #5f9ea0;
-    }
-    .produto, .carrinho {
-      background-color: #fff;
-      border: 1px solid #dfe6e9;
-      border-radius: 8px;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 500px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .produto h3, .produto p {
-      text-align: center;
-    }
-    .quantidade {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 10px 0;
-    }
-    .quantidade input {
-      width: 50px;
-      text-align: center;
-    }
-    select, .btn {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      font-weight: bold;
-      background-color: #cce6ff;
-      border: 1px solid #a3d2ff;
-      color: #004080;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .btn:hover {
-      background-color: #b3ddff;
-    }
-    .carousel-box {
-      position: relative;
-      text-align: center;
-    }
-    .carousel-box img,
-    .produto img {
-      width: 60%;
-      border-radius: 8px;
-      display: none;
-      margin: 0 auto;
-    }
-    .carousel-box img.active {
-      display: block;
-    }
-    .carousel-nav {
-      margin-top: 10px;
-      text-align: center;
-    }
-    .carousel-nav button {
-      background-color: #a3d2ff;
-      border: none;
-      padding: 5px 10px;
-      margin: 0 5px;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .remover {
-      background-color: #ffb3b3;
-      font-size: 0.9em;
-      padding: 5px 10px;
-    }
-    .limpar-btn {
-      background-color: #ffc9c9;
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
-<h1>Brilho Alado</h1>
+```jsx
+import { useState, useEffect } from 'react';
 
-  <!-- Vela Cappuccino -->
-<div class="produto">
-  <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Cappuccino">
-  <h3>Vela Cappuccino</h3>
-  <p>Tamanho: 140g - R$ 65,00</p>
-  <p>Essência: Cappuccino</p>
-  <div class="quantidade">
-    <button class="btn" onclick="alterarQtd('cappuccino', -1)">-</button>
-    <input type="number" id="quantidade_cappuccino" value="1" min="1">
-    <button class="btn" onclick="alterarQtd('cappuccino', 1)">+</button>
-  </div>
-  <button class="btn" onclick="adicionarCarrinho('Vela Aromática Cappuccino', 65, '140g', 'Cappuccino', '', 'quantidade_cappuccino')">Adicionar</button>
-</div>
+const productsData = [
+  {
+    id: 1,
+    name: 'Vela Cappuccino',
+    images: ['Vela_Cappuccino'],
+    weight: '140g',
+    price: 65,
+    scent: 'Cappuccino',
+    color: 'Fixo'
+  },
+  {
+    id: 2,
+    name: 'Vela Melancia',
+    images: ['Vela_Melancia'],
+    weightOptions: [
+      { value: '100g', price: 45 },
+      { value: '180g', price: 50 }
+    ],
+    scent: 'Melancia',
+    color: 'Fixo'
+  },
+  {
+    id: 3,
+    name: 'Vela Love',
+    images: ['Vela_Love_1', 'Vela_Love_2', 'Vela_Love_3'],
+    weight: '110g',
+    price: 40,
+    scentOptions: [
+      'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
+      'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
+      'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
+      'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
+      'Rosas', 'Zimbro e Madeira Guaiac'
+    ],
+    colorOptions: ['Azul', 'Rosa', 'Amarelo', 'Branco', 'Laranja']
+  },
+  {
+    id: 4,
+    name: 'Vela Recordação',
+    images: ['Vela_Recordacao_1', 'Vela_Recordacao_2', 'Vela_Recordacao_3'],
+    weight: '80g',
+    basePrice: 30,
+    discountPrice: 25,
+    scentOptions: [
+      'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
+      'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
+      'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
+      'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
+      'Rosas', 'Zimbro e Madeira Guaiac'
+    ]
+  }
+];
 
-<!-- Vela Melancia -->
-<div class="produto">
-  <img src="imagens/Vela_Melancia.jpg" alt="Vela Melancia">
-  <h3>Vela Melancia</h3>
-  <p>Tamanhos disponíveis:</p>
-  <select id="tamanho_melancia" class="btn">
-    <option value="180g|50">180g - R$ 50,00</option>
-    <option value="100g|45">100g - R$ 45,00</option>
-  </select>
-  <p>Essência: Melancia</p>
-  <div class="quantidade">
-    <button class="btn" onclick="alterarQtd('melancia', -1)">-</button>
-    <input type="number" id="quantidade_melancia" value="1" min="1">
-    <button class="btn" onclick="alterarQtd('melancia', 1)">+</button>
-  </div>
-  <button class="btn" onclick="adicionarMelancia()">Adicionar</button>
-</div>
+export default function App() {
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [cart, setCart] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setShowWelcome(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
-<!-- Vela Love -->
-<div class="produto">
-  <h3>Vela Love</h3>
-  <div class="carousel-box" id="carousel-love">
-    <img src="imagens/Vela_Love.jpg" class="active" alt="Vela Love 1">
-    <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
-    <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
-    <div class="carousel-nav">
-      <button onclick="prevSlide('love')">◀</button>
-      <button onclick="nextSlide('love')">▶</button>
-    </div>
-  </div>
-  <p>Tamanho: 110g - R$ 40,00</p>
-  <label for="essencia_love">Escolha a essência:</label>
-  <select id="essencia_love" class="btn">
-    <option value="">-- Selecione --</option>
-    <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
-    <option>Café com Chocolate</option><option>Canela</option><option>Cappuccino</option>
-    <option>Capim Limão</option><option>Cassis e Hibisco</option><option>Cereja e Avelã</option>
-    <option>Chá Verde</option><option>Flor de Cerejeira</option><option>Folhas de Figo</option>
-    <option>Lavanda Francesa</option><option>Melancia</option><option>Morango</option>
-    <option>Mousse de Maracujá</option><option>Oceano</option><option>Pistache</option>
-    <option>Rosas</option><option>Zimbro e Madeira Guaiac</option>
-  </select>
-  <label for="cor_love">Escolha a cor:</label>
-  <select id="cor_love" class="btn">
-    <option value="">-- Selecione --</option>
-    <option>Branco</option><option>Vermelho</option><option>Rosa</option>
-    <option>Lilás</option><option>Azul</option><option>Amarelo</option>
-  </select>
-  <div class="quantidade">
-    <button class="btn" onclick="alterarQtd('love', -1)">-</button>
-    <input type="number" id="quantidade_love" value="1" min="1">
-    <button class="btn" onclick="alterarQtd('love', 1)">+</button>
-  </div>
-  <button class="btn" onclick="adicionarLove()">Adicionar</button>
-</div>
+  const handleAddToCart = (product, quantity, selectedOptions) => {
+    const existingItem = cart.find(item => 
+      item.id === product.id &&
+      JSON.stringify(item.options) === JSON.stringify(selectedOptions)
+    );
 
-<!-- Vela Recordação -->
-<div class="produto">
-  <h3>Vela Recordação</h3>
-  <div class="carousel-box" id="carousel-recordacao">
-    <img src="imagens/Vela_Recordacao.jpg" class="active" alt="Vela Recordação 1">
-    <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
-    <div class="carousel-nav">
-      <button onclick="prevSlide('recordacao')">◀</button>
-      <button onclick="nextSlide('recordacao')">▶</button>
-    </div>
-  </div>
-  <p>Tamanho: 80g</p>
-  <p>Preço: 1 unid. R$ 30 | 2+ unid. R$ 25 cada</p>
-  <label for="essencia_recordacao">Escolha a essência:</label>
-  <select id="essencia_recordacao" class="btn">
-    <option value="">-- Selecione --</option>
-    <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
-    <option>Café com Chocolate</option><option>Canela</option><option>Cappuccino</option>
-    <option>Capim Limão</option><option>Cassis e Hibisco</option><option>Cereja e Avelã</option>
-    <option>Chá Verde</option><option>Flor de Cerejeira</option><option>Folhas de Figo</option>
-    <option>Lavanda Francesa</option><option>Melancia</option><option>Morango</option>
-    <option>Mousse de Maracujá</option><option>Oceano</option><option>Pistache</option>
-    <option>Rosas</option><option>Zimbro e Madeira Guaiac</option>
-  </select>
-  <div class="quantidade">
-    <button class="btn" onclick="alterarQtd('recordacao', -1)">-</button>
-    <input type="number" id="quantidade_recordacao" value="1" min="1">
-    <button class="btn" onclick="alterarQtd('recordacao', 1)">+</button>
-  </div>
-  <button class="btn" onclick="adicionarRecordacao()">Adicionar</button>
-</div>
-<!-- Carrinho -->
-<div class="carrinho">
-  <h2>Seu Pedido:</h2>
-  <ul id="carrinho"></ul>
-  <p><strong>Total: R$ <span id="total">0</span></strong></p>
-  <button class="limpar-btn" onclick="limparCarrinho()">Limpar Carrinho</button><br><br>
-  <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
-</div>
-
-<!-- Scripts -->
-<script>
-  let carrinho = [];
-  let total = 0;
-
-  const carousels = {
-    love: { index: 0, images: [] },
-    recordacao: { index: 0, images: [] }
+    if (existingItem) {
+      const updatedCart = cart.map(item =>
+        item.id === product.id &&
+        JSON.stringify(item.options) === JSON.stringify(selectedOptions)
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      );
+      setCart(updatedCart);
+    } else {
+      setCart([...cart, { ...product, quantity, options: selectedOptions }]);
+    }
   };
 
-  window.onload = function () {
-    ['love', 'recordacao'].forEach(id => {
-      carousels[id].images = Array.from(document.querySelectorAll(`#carousel-${id} img`));
-      showCarouselImage(id, 0);
-    });
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => {
+      if (item.id === 4) {
+        const recordacaoCount = cart.filter(i => i.id === 4).reduce((sum, i) => sum + i.quantity, 0);
+        const price = recordacaoCount >= 2 ? item.discountPrice : item.basePrice;
+        return total + (price * item.quantity);
+      }
+      return total + (item.price * item.quantity);
+    }, 0);
   };
 
-  function showCarouselImage(id, index) {
-    const imgs = carousels[id].images;
-    imgs.forEach(img => img.classList.remove("active"));
-    imgs[index].classList.add("active");
-    carousels[id].index = index;
-  }
+  const generateWhatsAppMessage = () => {
+    const items = cart.map(item => 
+      `${item.quantity}x ${item.name} - R$${item.id === 4 ? (cart.filter(i => i.id === 4).reduce((sum, i) => sum + i.quantity, 0) >= 2 ? item.discountPrice : item.basePrice) : item.price} cada`
+    ).join('\n');
+    
+    return `Olá! Gostaria de fazer um pedido:\n\n${items}\n\nTotal: R$${calculateTotal()}${selectedProduct ? `\n\nProduto em visualização: ${selectedProduct.name}` : ''}`;
+  };
 
-  function nextSlide(id) {
-    const imgs = carousels[id].images;
-    const newIndex = (carousels[id].index + 1) % imgs.length;
-    showCarouselImage(id, newIndex);
-  }
+  return (
+    <div className="min-h-screen bg-blue-50 font-sans">
+      {/* Welcome Modal */}
+      {showWelcome && (
+        <div className="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center p-4">
+          <div className="max-w-md text-center space-y-4">
+            <h1 className="text-2xl font-semibold text-blue-600">Bem-vindo à Brilho Alado!</h1>
+            <p className="text-gray-700">
+              Nossas velas artesanais são feitas com carinho e podem ter pequenas variações únicas.
+              Alguns produtos permitem personalização de cor, essência e tamanho.
+            </p>
+            <button 
+              onClick={() => setShowWelcome(false)}
+              className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
+            >
+              Começar
+            </button>
+          </div>
+        </div>
+      )}
 
-  function prevSlide(id) {
-    const imgs = carousels[id].images;
-    const newIndex = (carousels[id].index - 1 + imgs.length) % imgs.length;
-    showCarouselImage(id, newIndex);
-  }
+      {/* Main Content */}
+      <div className="container mx-auto p-4 pt-20">
+        <header className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-blue-800">Catálogo de Velas Aromáticas</h1>
+          <p className="text-blue-600">Produtos 100% artesanais com essências exclusivas</p>
+        </header>
 
-  function alterarQtd(id, delta) {
-    const input = document.getElementById("quantidade_" + id);
-    let novaQtd = parseInt(input.value) + delta;
-    input.value = Math.max(1, novaQtd);
-  }
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {productsData.map(product => (
+            <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+              <div className="relative">
+                {product.images.length > 1 ? (
+                  <div className="flex overflow-x-auto snap-x">
+                    {product.images.map((img, index) => (
+                      <img
+                        key={index}
+                        src={`https://placehold.co/400x300/${product.colorOptions ? product.colorOptions[index % product.colorOptions.length].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.png?text=${product.name}`}
+                        alt={product.name}
+                        className="w-full h-48 object-cover snap-center"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <img
+                    src={`https://placehold.co/400x300/${product.color || 'blue'}/FFFFFF.png?text=${product.name}`}
+                    alt={product.name}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+              </div>
 
-  function adicionarCarrinho(nome, preco, tamanho, essencia, cor, qtdId) {
-    const quantidade = parseInt(document.getElementById(qtdId).value);
-    carrinho.push({ nome, preco, tamanho, essencia, cor, quantidade });
-    atualizarCarrinho();
-  }
+              <div className="p-4 space-y-2">
+                <h3 className="font-semibold text-blue-800">{product.name}</h3>
+                <p className="text-sm text-gray-600">
+                  {product.weightOptions ? (
+                    <>
+                      Peso: 
+                      {product.weightOptions.map(option => (
+                        <span key={option.value} className="ml-1">
+                          {option.value} (R${option.price})
+                        </span>
+                      ))}
+                    </>
+                  ) : (
+                    `Peso: ${product.weight}`
+                  )}
+                </p>
+                <p>Essência: {product.scent || 'Selecione'}</p>
+                <p>Cor: {product.color || 'Selecione'}</p>
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={() => setSelectedProduct(product)}
+                    className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition"
+                  >
+                    Ver detalhes
+                  </button>
+                  <span className="font-bold text-blue-800">
+                    {product.basePrice ? `R$${product.basePrice}` : `R$${product.price}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-  function adicionarMelancia() {
-    const select = document.getElementById("tamanho_melancia").value.split("|");
-    const tamanho = select[0];
-    const preco = parseFloat(select[1]);
-    const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
-    carrinho.push({ nome: "Vela Melancia", preco, tamanho, essencia: "Melancia", cor: "", quantidade });
-    atualizarCarrinho();
-  }
+        {/* Product Modal */}
+        {selectedProduct && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
+              <button 
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              >
+                &times;
+              </button>
+              <h2 className="text-xl font-semibold">{selectedProduct.name}</h2>
+              <div className="flex justify-center">
+                {selectedProduct.images.length > 1 ? (
+                  <div className="flex overflow-x-auto snap-x w-full">
+                    {selectedProduct.images.map((img, index) => (
+                      <img
+                        key={index}
+                        src={`https://placehold.co/400x300/${selectedProduct.colorOptions ? selectedProduct.colorOptions[index % selectedProduct.colorOptions.length].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.png?text=${selectedProduct.name}`}
+                        alt={selectedProduct.name}
+                        className="w-40 h-40 object-cover snap-center"
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <img
+                    src={`https://placehold.co/400x300/${selectedProduct.color || 'blue'}/FFFFFF.png?text=${selectedProduct.name}`}
+                    alt={selectedProduct.name}
+                    className="w-40 h-40 object-cover"
+                  />
+                )}
+              </div>
+              <div className="space-y-2">
+                {selectedProduct.weightOptions && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Peso:</label>
+                    <select className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      {selectedProduct.weightOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.value} - R${option.price}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {selectedProduct.scentOptions && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Essência:</label>
+                    <select className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      {selectedProduct.scentOptions.map(scent => (
+                        <option key={scent} value={scent}>
+                          {scent}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {selectedProduct.colorOptions && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Cor:</label>
+                    <select className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                      {selectedProduct.colorOptions.map(color => (
+                        <option key={color} value={color}>
+                          {color}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <div className="flex items-center space-x-2">
+                  <label className="block text-sm font-medium text-gray-700">Quantidade:</label>
+                  <input 
+                    type="number" 
+                    min="1"
+                    className="mt-1 block w-20 border-gray-300 rounded-md shadow-sm"
+                  />
+                </div>
+                <button className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
+                  Adicionar ao Carrinho
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
-  function adicionarLove() {
-    const essencia = document.getElementById("essencia_love").value;
-    const cor = document.getElementById("cor_love").value;
-    const quantidade = parseInt(document.getElementById("quantidade_love").value);
-    if (!essencia || !cor) {
-      alert("Por favor, selecione a essência e a cor.");
-      return;
-    }
-    carrinho.push({ nome: "Vela Love", preco: 40, tamanho: "110g", essencia, cor, quantidade });
-    atualizarCarrinho();
-  }
-
-  function adicionarRecordacao() {
-    const essencia = document.getElementById("essencia_recordacao").value;
-    const quantidade = parseInt(document.getElementById("quantidade_recordacao").value);
-    if (!essencia) {
-      alert("Por favor, selecione a essência.");
-      return;
-    }
-    const preco = quantidade >= 2 ? 25 : 30;
-    carrinho.push({ nome: "Vela Recordação", preco, tamanho: "80g", essencia, cor: "", quantidade });
-    atualizarCarrinho();
-  }
-
-  function removerItem(index) {
-    carrinho.splice(index, 1);
-    atualizarCarrinho();
-  }
-
-  function limparCarrinho() {
-    carrinho = [];
-    atualizarCarrinho();
-  }
-
-  function atualizarCarrinho() {
-    const lista = document.getElementById("carrinho");
-    lista.innerHTML = "";
-    total = 0;
-
-    carrinho.forEach((item, index) => {
-      const subtotal = item.preco * item.quantidade;
-      total += subtotal;
-      const li = document.createElement("li");
-      li.innerHTML =
-        `<strong>${item.quantidade}x ${item.nome}</strong><br>` +
-        `Tamanho: ${item.tamanho}<br>` +
-        `Essência: ${item.essencia}<br>` +
-        (item.cor ? `Cor: ${item.cor}<br>` : "") +
-        `R$ ${subtotal}<br>` +
-        `<button class="remover" onclick="removerItem(${index})">Remover</button>`;
-      lista.appendChild(li);
-    });
-
-    document.getElementById("total").textContent = total;
-
-    let mensagem = "Olá, gostaria de fazer um pedido:%0A";
-    carrinho.forEach(item => {
-      mensagem += `- ${item.quantidade}x ${item.nome} [${item.tamanho}, ${item.essencia}${item.cor ? ", " + item.cor : ""}] - R$ ${item.preco * item.quantidade}%0A`;
-    });
-    mensagem += `Total: R$ ${total}`;
-    document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
-  }
-</script>
-
-</body>
-</html>
+        {/* Cart Sidebar */}
+        <div className="fixed bottom-0 right-0 bg-white w-full md:w-96 h-64 md:h-screen border-t md:border-l border-gray-200 p-4">
+          <h3 className="font-semibold text-lg text-blue-800 mb-4">Carrinho</h3>
+          {cart.length === 0 ? (
+            <p className="text-gray-600">Seu carrinho está vazio</p>
+          ) : (
+            <div className="space-y-2 overflow-y-auto h-40">
+              {cart.map(item => (
+                <div key={item.id} className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-600">Qtd: {item.quantity}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold">
+                      {item.id === 4 
+                        ? (cart.filter(i => i.id === 4).reduce((sum, i) => sum + i.quantity, 0) >= 2 
+                          ? `R$${item.discountPrice * item.quantity}` 
+                          : `R$${item.basePrice * item.quantity}`)
+                        : `R$${item.price * item.quantity}`}
+                    </p>
+                    <button className="text-xs text-red-500 hover:text-red-700">
+                      Remover
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-4">
+            <p className="font-bold text-blue-800">Total: R${calculateTotal()}</p>
+            <a 
+              href={`https://wa.me/5547991880797?text=${encodeURIComponent(generateWhatsAppMessage())}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-green-500 text-white py-2 rounded-md block text-center hover:bg-green-600 transition mt-4"
+            >
+              Enviar Pedido via WhatsApp
+            </a>
+            <button 
+              onClick={() => setCart([])}
+              className="w-full bg-red-500 text-white py-2 rounded-md block text-center hover:bg-red-600 transition mt-2"
+            >
+              Limpar Carrinho
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
