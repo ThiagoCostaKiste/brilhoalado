@@ -183,12 +183,16 @@
 </div>
 
 <!-- Vela Love -->
-<div class="produto">
-  <div class="slider">
-    <img src="imagens/Vela_Love.jpg" class="active" alt="Vela Love">
-    <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
-    <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
-  </div>
+<div id="slider-love" class="slider">
+  <img src="imagens/Vela_Love.jpg" class="active" alt="Vela Love">
+  <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
+  <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+</div>
+<div class="slider-controls">
+  <button onclick="prevSlide('love')">◀</button>
+  <button onclick="nextSlide('love')">▶</button>
+</div>
+
   <div class="slider-controls">
     <button onclick="prevSlide()">◀</button>
     <button onclick="nextSlide()">▶</button>
@@ -240,15 +244,14 @@
 </div>
 
   <!-- Vela Recordação -->
-<div class="produto">
-  <div class="slider">
-    <img src="imagens/Vela_Recordacao.jpg" class="active" alt="Vela Recordação">
-    <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
-  </div>
-  <div class="slider-controls">
-    <button onclick="prevSlide()">◀</button>
-    <button onclick="nextSlide()">▶</button>
-  </div>
+<div id="slider-recordacao" class="slider">
+  <img src="imagens/Vela_Recordacao.jpg" class="active" alt="Vela Recordação">
+  <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
+</div>
+<div class="slider-controls">
+  <button onclick="prevSlide('recordacao')">◀</button>
+  <button onclick="nextSlide('recordacao')">▶</button>
+</div>
   <h3>Vela Recordação</h3>
   <p>Tamanho: 80g</p>
   <p>Preço: 1 unidade por R$ 30. A partir de 2 por R$ 25 cada</p>
@@ -283,7 +286,7 @@
   </div>
   <button class="btn" onclick="adicionarRecordacao()">Adicionar</button>
 </div>
-
+  
 <!-- Carrinho -->
 <div class="carrinho">
   <h2>Seu Pedido:</h2>
@@ -297,32 +300,40 @@
 <script>
   let carrinho = [];
   let total = 0;
-  let slideIndex = 0;
-  let slides = [];
+
+  const sliderState = {
+    love: 0,
+    recordacao: 0
+  };
+
+  function showSlide(produto, index) {
+    const slider = document.querySelectorAll(`#slider-${produto} img`);
+    slider.forEach((img, i) => {
+      img.classList.remove("active");
+      if (i === index) img.classList.add("active");
+    });
+    sliderState[produto] = index;
+  }
+
+  function nextSlide(produto) {
+    const imgs = document.querySelectorAll(`#slider-${produto} img`);
+    let newIndex = (sliderState[produto] + 1) % imgs.length;
+    showSlide(produto, newIndex);
+  }
+
+  function prevSlide(produto) {
+    const imgs = document.querySelectorAll(`#slider-${produto} img`);
+    let newIndex = (sliderState[produto] - 1 + imgs.length) % imgs.length;
+    showSlide(produto, newIndex);
+  }
 
   window.onload = function () {
-    slides = document.querySelectorAll(".slider img");
-    showSlide(0);
+    showSlide('love', 0);
+    showSlide('recordacao', 0);
   };
 
   function fecharBoasVindas() {
     document.getElementById("popupBoasVindas").style.display = "none";
-  }
-
-  function showSlide(index) {
-    slides.forEach((img, i) => {
-      img.classList.remove("active");
-      if (i === index) img.classList.add("active");
-    });
-    slideIndex = index;
-  }
-
-  function nextSlide() {
-    showSlide((slideIndex + 1) % slides.length);
-  }
-
-  function prevSlide() {
-    showSlide((slideIndex - 1 + slides.length) % slides.length);
   }
 
   function alterarQtd(id, delta) {
@@ -357,18 +368,18 @@
     carrinho.push({ nome: "Vela Love", preco: 40, tamanho: "110g", essencia, cor, quantidade });
     atualizarCarrinho();
   }
-  
-function adicionarRecordacao() {
-  const essencia = document.getElementById("essencia_recordacao").value;
-  const quantidade = parseInt(document.getElementById("quantidade_recordacao").value);
-  if (!essencia) {
-    alert("Por favor, selecione a essência.");
-    return;
+
+  function adicionarRecordacao() {
+    const essencia = document.getElementById("essencia_recordacao").value;
+    const quantidade = parseInt(document.getElementById("quantidade_recordacao").value);
+    if (!essencia) {
+      alert("Por favor, selecione a essência.");
+      return;
+    }
+    const preco = quantidade >= 2 ? 25 : 30;
+    carrinho.push({ nome: "Vela Recordação", preco, tamanho: "80g", essencia, cor: "", quantidade });
+    atualizarCarrinho();
   }
-  const preco = quantidade >= 2 ? 25 : 30;
-  carrinho.push({ nome: "Vela Recordação", preco, tamanho: "80g", essencia, cor: "", quantidade });
-  atualizarCarrinho();
-}
 
   function removerItem(index) {
     carrinho.splice(index, 1);
@@ -412,3 +423,4 @@ function adicionarRecordacao() {
 
 </body>
 </html>
+
