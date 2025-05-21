@@ -55,30 +55,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        button:hover {
-            background-color: #8ac8ff;
-        }
-        ul {
-            padding-left: 0;
-            list-style: none;
-        }
-        .item-carrinho {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-        .controles-carrinho {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 5px;
-        }
-        .controles-carrinho input {
-            width: 40px;
-            text-align: center;
-        }
         .remover {
             background-color: #ffb3b3;
             font-size: 0.9em;
@@ -88,17 +64,32 @@
             background-color: #ffc9c9;
             margin-top: 10px;
         }
-        @media screen and (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            .produto, .carrinho {
-                width: 90%;
-                padding: 15px;
-            }
-            .produto img {
-                width: 70%;
-            }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 300px;
+            border-radius: 8px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -114,6 +105,10 @@
             <input type="number" id="quantidade" value="1" min="1">
             <button onclick="alterarQtd(1)">+</button>
         </div>
+        <div style="text-align:center; margin-bottom:10px;">
+            <button onclick="abrirModal()">Selecionar Essência</button>
+            <p id="essenciaSelecionada" style="margin-top:10px; font-style:italic;">Essência: (não selecionada)</p>
+        </div>
         <div style="text-align:center;">
             <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65)">Adicionar</button>
         </div>
@@ -127,9 +122,21 @@
         <a id="enviar" href="#" target="_blank"><button>Enviar pedido via WhatsApp</button></a>
     </div>
 
+    <div id="modalEssencia" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <label for="essenciaSelect"><strong>Escolha a Essência:</strong></label><br>
+            <select id="essenciaSelect" onchange="selecionarEssencia()" style="width: 100%; margin-top:10px;">
+                <option value="">-- Selecione --</option>
+                """ + essencias_html + """
+            </select>
+        </div>
+    </div>
+
     <script>
         let carrinho = [];
         let total = 0;
+        let essenciaAtual = "";
 
         function alterarQtd(delta) {
             let qtdInput = document.getElementById("quantidade");
@@ -137,14 +144,28 @@
             qtdInput.value = Math.max(1, novaQtd);
         }
 
+        function abrirModal() {
+            document.getElementById("modalEssencia").style.display = "block";
+        }
+
+        function fecharModal() {
+            document.getElementById("modalEssencia").style.display = "none";
+        }
+
+        function selecionarEssencia() {
+            const select = document.getElementById("essenciaSelect");
+            essenciaAtual = select.value;
+            document.getElementById("essenciaSelecionada").innerText = "Essência: " + (essenciaAtual || "(não selecionada)");
+            fecharModal();
+        }
+
         function adicionarAoCarrinho(produto, preco) {
             let quantidade = parseInt(document.getElementById("quantidade").value);
-            let item = carrinho.find(item => item.produto === produto);
-            if (item) {
-                item.quantidade += quantidade;
-            } else {
-                carrinho.push({ produto, preco, quantidade });
+            if (!essenciaAtual) {
+                alert("Por favor, selecione a essência da vela.");
+                return;
             }
+            carrinho.push({ produto, preco, quantidade, essencia: essenciaAtual });
             atualizarCarrinho();
         }
 
@@ -158,12 +179,6 @@
             atualizarCarrinho();
         }
 
-        function atualizarQuantidade(index, novaQtd) {
-            novaQtd = Math.max(1, parseInt(novaQtd));
-            carrinho[index].quantidade = novaQtd;
-            atualizarCarrinho();
-        }
-
         function atualizarCarrinho() {
             const lista = document.getElementById('carrinho');
             lista.innerHTML = '';
@@ -174,18 +189,11 @@
                 total += precoTotal;
 
                 const li = document.createElement('li');
-                li.className = 'item-carrinho';
                 li.innerHTML = `
-                    <strong>${item.produto}</strong><br>
-                    <div class="controles-carrinho">
-                        <span>R$ ${precoTotal}</span>
-                        <div>
-                            <button onclick="alterarQuantidade(${index}, ${item.quantidade - 1})">-</button>
-                            <input type="number" value="${item.quantidade}" min="1" onchange="atualizarQuantidade(${index}, this.value)">
-                            <button onclick="alterarQuantidade(${index}, ${item.quantidade + 1})">+</button>
-                            <button class="remover" onclick="removerItem(${index})">Remover</button>
-                        </div>
-                    </div>
+                    <strong>${item.quantidade}x ${item.produto}</strong><br>
+                    Essência: <em>${item.essencia}</em><br>
+                    R$ ${precoTotal}<br>
+                    <button class="remover" onclick="removerItem(${index})">Remover</button>
                 `;
                 lista.appendChild(li);
             });
@@ -194,19 +202,19 @@
 
             let mensagem = 'Olá, gostaria de fazer um pedido:%0A';
             carrinho.forEach(item => {
-                mensagem += `- ${item.quantidade}x ${item.produto} (R$ ${item.preco * item.quantidade})%0A`;
+                mensagem += `- ${item.quantidade}x ${item.produto} (${item.essencia}) - R$ ${item.preco * item.quantidade}%0A`;
             });
             mensagem += `Total: R$ ${total}`;
             const numero = '5547991880797';
             document.getElementById('enviar').href = `https://wa.me/${numero}?text=${mensagem}`;
         }
 
-        function alterarQuantidade(index, novaQtd) {
-            if (novaQtd >= 1) {
-                carrinho[index].quantidade = novaQtd;
-                atualizarCarrinho();
+        window.onclick = function(event) {
+            const modal = document.getElementById("modalEssencia");
+            if (event.target === modal) {
+                fecharModal();
             }
-        }
+        };
     </script>
 </body>
 </html>
