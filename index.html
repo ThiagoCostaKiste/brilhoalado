@@ -1,6 +1,3 @@
-# Regenerando o HTML corretamente com substituições já feitas no conteúdo (sem erro de referência)
-# Recriando conteúdo HTML válido com os dados de essência diretamente incluídos
-
 essencias = [
     "Algodão", "Baunilha", "Bergamota", "Café com Chocolate", "Canela", "Cappuccino",
     "Capim Limão", "Cassis e Hibisco", "Cereja e Avelã", "Chá Verde", "Flor de Cerejeira",
@@ -8,10 +5,9 @@ essencias = [
     "Oceano", "Pistache", "Rosas", "Zimbro e Madeira Guaiac"
 ]
 
-essencias_html = "\n".join([f'<option value="{e}">{e}</option>' for e in essencias])
+essencias_options = "\n".join([f'<option value="{e}">{e}</option>' for e in essencias])
 
-# Template HTML com concatenação corrigida (sem usar template literals do JavaScript)
-popup_final_html = f"""
+html_restore = f"""
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -20,26 +16,27 @@ popup_final_html = f"""
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {{
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: #f0f6ff;
-            margin: 0;
+            color: #333;
             padding: 20px;
+            margin: 0;
         }}
         h1 {{
             text-align: center;
-            color: #4a7c9c;
+            color: #5f9ea0;
         }}
         .produto, .carrinho {{
             background-color: #fff;
             padding: 20px;
-            margin: 20px auto;
             border-radius: 8px;
+            margin: 20px auto;
             max-width: 400px;
             box-shadow: 0 0 10px rgba(0,0,0,0.05);
         }}
         .produto img {{
             display: block;
-            margin: 0 auto;
+            margin: 0 auto 10px;
             width: 50%;
             border-radius: 8px;
         }}
@@ -62,11 +59,8 @@ popup_final_html = f"""
             border: none;
             padding: 10px 15px;
             border-radius: 4px;
-            cursor: pointer;
             font-weight: bold;
-        }}
-        button:hover {{
-            background-color: #8ac8ff;
+            cursor: pointer;
         }}
         .modal {{
             display: none;
@@ -95,106 +89,106 @@ popup_final_html = f"""
 </head>
 <body>
 
-    <h1>Brilho Alado</h1>
+<h1>Brilho Alado</h1>
 
-    <div class="produto">
-        <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino">
-        <h3>Vela Aromática Cappuccino</h3>
-        <p>R$ 65,00</p>
-        <div class="quantidade">
-            <button onclick="alterarQtd(-1)">-</button>
-            <input type="number" id="quantidade" value="1" min="1">
-            <button onclick="alterarQtd(1)">+</button>
-        </div>
-        <div style="text-align:center; margin: 10px 0;">
-            <button onclick="abrirModal()">Selecionar Essência</button>
-            <p id="essenciaSelecionada" style="font-style: italic;">Essência: (não selecionada)</p>
-        </div>
-        <div style="text-align:center;">
-            <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65)">Adicionar</button>
-        </div>
+<div class="produto">
+    <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino">
+    <h3>Vela Aromática Cappuccino</h3>
+    <p>R$ 65,00</p>
+    <div class="quantidade">
+        <button onclick="alterarQtd(-1)">-</button>
+        <input type="number" id="quantidade" value="1" min="1">
+        <button onclick="alterarQtd(1)">+</button>
     </div>
-
-    <div class="carrinho">
-        <h2>Seu Pedido:</h2>
-        <ul id="carrinho"></ul>
-        <p><strong>Total: R$ <span id="total">0</span></strong></p>
-        <a id="enviar" href="#" target="_blank"><button>Enviar pedido via WhatsApp</button></a>
+    <div style="text-align:center; margin-bottom:10px;">
+        <button onclick="abrirModal()">Selecionar Essência</button>
+        <p id="essenciaSelecionada" style="font-style:italic;">Essência: (não selecionada)</p>
     </div>
-
-    <!-- Modal -->
-    <div id="modalEssencia" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="fecharModal()">&times;</span>
-            <h4>Escolha a Essência:</h4>
-            <select id="essenciaSelect" onchange="selecionarEssencia()" style="width: 100%; margin-top: 10px;">
-                <option value="">-- Selecione --</option>
-                {essencias_html}
-            </select>
-        </div>
+    <div style="text-align:center;">
+        <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65)">Adicionar</button>
     </div>
+</div>
 
-    <script>
-        let carrinho = [];
-        let total = 0;
-        let essenciaAtual = "";
+<div class="carrinho">
+    <h2>Seu Pedido:</h2>
+    <ul id="carrinho"></ul>
+    <p><strong>Total: R$ <span id="total">0</span></strong></p>
+    <a id="enviar" href="#" target="_blank"><button>Enviar pedido via WhatsApp</button></a>
+</div>
 
-        function alterarQtd(delta) {{
-            let input = document.getElementById("quantidade");
-            let novaQtd = parseInt(input.value) + delta;
-            input.value = Math.max(1, novaQtd);
+<div id="modalEssencia" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <label for="essenciaSelect"><strong>Escolha a Essência:</strong></label><br>
+        <select id="essenciaSelect" onchange="selecionarEssencia()" style="width: 100%; margin-top:10px;">
+            <option value="">-- Selecione --</option>
+            {essencias_options}
+        </select>
+    </div>
+</div>
+
+<script>
+    let carrinho = [];
+    let total = 0;
+    let essenciaAtual = "";
+
+    function alterarQtd(delta) {{
+        let input = document.getElementById("quantidade");
+        let novaQtd = parseInt(input.value) + delta;
+        input.value = Math.max(1, novaQtd);
+    }}
+
+    function abrirModal() {{
+        document.getElementById("modalEssencia").style.display = "block";
+    }}
+
+    function fecharModal() {{
+        document.getElementById("modalEssencia").style.display = "none";
+    }}
+
+    function selecionarEssencia() {{
+        const select = document.getElementById("essenciaSelect");
+        essenciaAtual = select.value;
+        document.getElementById("essenciaSelecionada").innerText = "Essência: " + (essenciaAtual || "(não selecionada)");
+        fecharModal();
+    }}
+
+    function adicionarAoCarrinho(produto, preco) {{
+        const qtd = parseInt(document.getElementById("quantidade").value);
+        if (!essenciaAtual) {{
+            alert("Por favor, selecione a essência.");
+            return;
         }}
+        carrinho.push({{ produto, preco, quantidade: qtd, essencia: essenciaAtual }});
+        atualizarCarrinho();
+    }}
 
-        function abrirModal() {{
-            document.getElementById("modalEssencia").style.display = "block";
-        }}
+    function atualizarCarrinho() {{
+        const lista = document.getElementById("carrinho");
+        lista.innerHTML = "";
+        total = 0;
+        carrinho.forEach(item => {{
+            const subtotal = item.preco * item.quantidade;
+            total += subtotal;
+            const li = document.createElement("li");
+            li.textContent = item.quantidade + "x " + item.produto + " (" + item.essencia + ") - R$ " + subtotal;
+            lista.appendChild(li);
+        }});
+        document.getElementById("total").innerText = total;
+        let mensagem = "Olá, gostaria de fazer um pedido:%0A";
+        carrinho.forEach(item => {{
+            mensagem += "- " + item.quantidade + "x " + item.produto + " (" + item.essencia + ") - R$ " + (item.preco * item.quantidade) + "%0A";
+        }});
+        mensagem += "Total: R$ " + total;
+        document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
+    }}
 
-        function fecharModal() {{
-            document.getElementById("modalEssencia").style.display = "none";
-        }}
-
-        function selecionarEssencia() {{
-            const select = document.getElementById("essenciaSelect");
-            essenciaAtual = select.value;
-            document.getElementById("essenciaSelecionada").innerText = "Essência: " + (essenciaAtual || "(não selecionada)");
+    window.onclick = function(event) {{
+        if (event.target == document.getElementById("modalEssencia")) {{
             fecharModal();
         }}
+    }};
+</script>
 
-        function adicionarAoCarrinho(produto, preco) {{
-            const qtd = parseInt(document.getElementById("quantidade").value);
-            if (!essenciaAtual) {{
-                alert("Por favor, selecione a essência.");
-                return;
-            }}
-            carrinho.push({{ produto, preco, quantidade: qtd, essencia: essenciaAtual }});
-            atualizarCarrinho();
-        }}
-
-        function atualizarCarrinho() {{
-            const lista = document.getElementById("carrinho");
-            lista.innerHTML = "";
-            total = 0;
-            carrinho.forEach(item => {{
-                const subtotal = item.preco * item.quantidade;
-                total += subtotal;
-                const li = document.createElement("li");
-                li.innerHTML = item.quantidade + "x " + item.produto + " (" + item.essencia + ") - R$ " + subtotal;
-                lista.appendChild(li);
-            }});
-            document.getElementById("total").innerText = total;
-            let mensagem = "Olá, gostaria de fazer um pedido:%0A";
-            carrinho.forEach(item => {{
-                mensagem += "- " + item.quantidade + "x " + item.produto + " (" + item.essencia + ") - R$ " + (item.preco * item.quantidade) + "%0A";
-            }});
-            mensagem += "Total: R$ " + total;
-            document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
-        }}
-
-        window.onclick = function(event) {{
-            if (event.target == document.getElementById("modalEssencia")) {{
-                fecharModal();
-            }}
-        }};
-    </script>
 </body>
 </html>
