@@ -9,9 +9,20 @@
         .modal {
             transition: opacity 0.3s;
         }
-        .carousel img {
-            aspect-ratio: 16/9;
+        .image-container {
+            aspect-ratio: 9/16;
+            height: 200px;
+            overflow: hidden;
+        }
+        .image-container img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+        }
+        .carousel img {
+            aspect-ratio: 9/16;
+            object-fit: cover;
+            max-width: 100%;
         }
         .carousel::-webkit-scrollbar {
             height: 8px;
@@ -27,9 +38,9 @@
 </head>
 <body class="bg-blue-50 min-h-screen">
     <!-- Modal de Boas-Vindas -->
-    <div id="welcomeModal" class="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center p-4">
-        <div class="max-w-md text-center space-y-4">
-            <h1 class="text-2xl font-semibold text-blue-600">Bem-vindo à Brilho Alado!</h1>
+    <div id="welcomeModal" class="fixed inset-0 bg-blue-100 flex flex-col items-center justify-center p-4 z-50">
+        <div class="max-w-md text-center space-y-4 bg-white p-6 rounded-lg shadow-lg">
+            <h1 class="text-2xl font-semibold text-blue-800">Bem-vindo à Brilho Alado!</h1>
             <p class="text-gray-700">
                 Nossas velas artesanais são feitas com carinho e podem ter pequenas variações únicas.
                 Alguns produtos permitem personalização de cor, essência e tamanho.
@@ -54,13 +65,13 @@
     </div>
 
     <!-- Modal de Detalhes do Produto -->
-    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-md w-full relative">
             <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             
-            <!-- Carrossel de Imagens -->
-            <div class="carousel flex overflow-x-auto gap-2 pb-2 mb-4">
-                <!-- Imagens serão inseridas aqui -->
+            <!-- Imagem Principal -->
+            <div class="image-container mb-4">
+                <img src="" alt="" class="w-full h-full object-cover">
             </div>
             
             <h2 id="modalTitle" class="text-xl font-semibold mb-4"></h2>
@@ -95,7 +106,7 @@
         {
             id: 1,
             name: 'Vela Cappuccino',
-            images: ['Vela_Cappuccino.jpg'],
+            images: ['/imagens/Vela_Cappuccino.jpg'],
             weight: '140g',
             price: 65,
             scent: 'Cappuccino',
@@ -104,7 +115,7 @@
         {
             id: 2,
             name: 'Vela Melancia',
-            images: ['Vela_Melancia.jpg'],
+            images: ['/imagens/Vela_Melancia.jpg'],
             weightOptions: [
                 { value: '100g', price: 45 },
                 { value: '180g', price: 50 }
@@ -115,7 +126,7 @@
         {
             id: 3,
             name: 'Vela Love',
-            images: ['Vela_Love_1.jpg', 'Vela_Love_2.jpg', 'Vela_Love_3.jpg'],
+            images: ['/imagens/Vela_Love.jpg', '/imagens/Vela_Love_2.jpg', '/imagens/Vela_Love_3.jpg'],
             weight: '110g',
             price: 40,
             scentOptions: [
@@ -130,7 +141,7 @@
         {
             id: 4,
             name: 'Vela Recordação',
-            images: ['Vela_Recordacao_1.jpg', 'Vela_Recordacao_2.jpg', 'Vela_Recordacao_3.jpg'],
+            images: ['/imagens/Vela_Recordacao.jpg', '/imagens/Vela_Recordacao_2.jpg'],
             weight: '80g',
             basePrice: 30,
             discountPrice: 25,
@@ -159,8 +170,9 @@
         container.innerHTML = products.map(product => `
             <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
                 <div class="relative">
-                    <img src="https://placehold.co/400x225/ ${product.color || 'blue'}/FFFFFF.jpg?text=${product.name}" 
-                        class="w-full object-cover aspect-[16/9]">
+                    <div class="image-container">
+                        <img src="${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover">
+                    </div>
                 </div>
                 <div class="p-4 space-y-2">
                     <h3 class="font-semibold text-blue-800">${product.name}</h3>
@@ -190,16 +202,11 @@
         currentProduct = products.find(p => p.id === productId);
         const modal = document.getElementById('productModal');
         const modalTitle = document.getElementById('modalTitle');
-        const carousel = modal.querySelector('.carousel');
+        const mainImage = modal.querySelector('.image-container img');
         const modalContent = document.getElementById('modalContent');
 
         modalTitle.textContent = currentProduct.name;
-
-        // Renderiza carrossel de imagens
-        carousel.innerHTML = currentProduct.images.map((img, index) => `
-            <img src="https://placehold.co/400x225/ ${currentProduct.colorOptions ? currentProduct.colorOptions[0].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.jpg?text=${currentProduct.name}" 
-                class="w-40 object-cover aspect-[16/9]">
-        `).join('');
+        mainImage.src = currentProduct.images[0];
 
         // Renderiza opções do produto
         modalContent.innerHTML = `
