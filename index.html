@@ -182,59 +182,33 @@
   <button class="btn" onclick="adicionarMelancia()">Adicionar</button>
 </div>
 
-<!-- Vela Love -->
-<div id="slider-love" class="slider">
-  <img src="imagens/Vela_Love.jpg" class="active" alt="Vela Love">
-  <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
-  <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
-</div>
-<div class="slider-controls">
-  <button onclick="prevSlide('love')">◀</button>
-  <button onclick="nextSlide('love')">▶</button>
-</div>
-
-  <div class="slider-controls">
-    <button onclick="prevSlide()">◀</button>
-    <button onclick="nextSlide()">▶</button>
-  </div>
-  <h3>Vela Love</h3>
-  <p>Tamanho: 110g - R$ 40,00</p>
+<div class="produto">
+  <details open>
+    <summary>Vela Love</summary>
+    <div class="carousel">
+      <img src="imagens/Vela_Love.jpg" alt="Vela Love">
+      <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
+      <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+    </div>
+  </details>
+  <p style="text-align:center;">Tamanho: 110g - R$ 40,00</p>
   <label for="essencia_love">Escolha a essência:</label>
   <select id="essencia_love" class="btn">
     <option value="">-- Selecione --</option>
-    <option>Algodão</option>
-    <option>Baunilha</option>
-    <option>Bergamota</option>
-    <option>Café com Chocolate</option>
-    <option>Canela</option>
-    <option>Cappuccino</option>
-    <option>Capim Limão</option>
-    <option>Cassis e Hibisco</option>
-    <option>Cereja e Avelã</option>
-    <option>Chá Verde</option>
-    <option>Flor de Cerejeira</option>
-    <option>Folhas de Figo</option>
-    <option>Lavanda Francesa</option>
-    <option>Melancia</option>
-    <option>Morango</option>
-    <option>Mousse de Maracujá</option>
-    <option>Oceano</option>
-    <option>Pistache</option>
-    <option>Rosas</option>
-    <option>Zimbro e Madeira Guaiac</option>
+    <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
+    <option>Café com Chocolate</option><option>Canela</option><option>Cappuccino</option>
+    <option>Capim Limão</option><option>Cassis e Hibisco</option><option>Cereja e Avelã</option>
+    <option>Chá Verde</option><option>Flor de Cerejeira</option><option>Folhas de Figo</option>
+    <option>Lavanda Francesa</option><option>Melancia</option><option>Morango</option>
+    <option>Mousse de Maracujá</option><option>Oceano</option><option>Pistache</option>
+    <option>Rosas</option><option>Zimbro e Madeira Guaiac</option>
   </select>
-
   <label for="cor_love">Escolha a cor:</label>
   <select id="cor_love" class="btn">
     <option value="">-- Selecione --</option>
-    <option>Branco</option>
-    <option>Vermelho</option>
-    <option>Rosa</option>
-    <option>Lilás</option>
-    <option>Azul</option>
-    <option>Amarelo</option>
+    <option>Branco</option><option>Vermelho</option><option>Rosa</option>
+    <option>Lilás</option><option>Azul</option><option>Amarelo</option>
   </select>
-
   <div class="quantidade">
     <button class="btn" onclick="alterarQtd('love', -1)">-</button>
     <input type="number" id="quantidade_love" value="1" min="1">
@@ -242,42 +216,27 @@
   </div>
   <button class="btn" onclick="adicionarLove()">Adicionar</button>
 </div>
-
-  <!-- Vela Recordação -->
-<div id="slider-recordacao" class="slider">
-  <img src="imagens/Vela_Recordacao.jpg" class="active" alt="Vela Recordação">
-  <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
-</div>
-<div class="slider-controls">
-  <button onclick="prevSlide('recordacao')">◀</button>
-  <button onclick="nextSlide('recordacao')">▶</button>
-</div>
-  <h3>Vela Recordação</h3>
-  <p>Tamanho: 80g</p>
-  <p>Preço: 1 unidade por R$ 30. A partir de 2 por R$ 25 cada</p>
+  
+<div class="produto">
+  <details open>
+    <summary>Vela Recordação</summary>
+    <div class="carousel">
+      <img src="imagens/Vela_Recordacao.jpg" alt="Vela Recordação">
+      <img src="imagens/Vela_Recordacao_2.jpg" alt="Vela Recordação 2">
+    </div>
+  </details>
+  <p style="text-align:center;">Tamanho: 80g</p>
+  <p style="text-align:center;">Preço: 1 unidade por R$ 30, 2 ou mais por R$ 25 cada</p>
   <label for="essencia_recordacao">Escolha a essência:</label>
   <select id="essencia_recordacao" class="btn">
     <option value="">-- Selecione --</option>
-    <option>Algodão</option>
-    <option>Baunilha</option>
-    <option>Bergamota</option>
-    <option>Café com Chocolate</option>
-    <option>Canela</option>
-    <option>Cappuccino</option>
-    <option>Capim Limão</option>
-    <option>Cassis e Hibisco</option>
-    <option>Cereja e Avelã</option>
-    <option>Chá Verde</option>
-    <option>Flor de Cerejeira</option>
-    <option>Folhas de Figo</option>
-    <option>Lavanda Francesa</option>
-    <option>Melancia</option>
-    <option>Morango</option>
-    <option>Mousse de Maracujá</option>
-    <option>Oceano</option>
-    <option>Pistache</option>
-    <option>Rosas</option>
-    <option>Zimbro e Madeira Guaiac</option>
+    <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
+    <option>Café com Chocolate</option><option>Canela</option><option>Cappuccino</option>
+    <option>Capim Limão</option><option>Cassis e Hibisco</option><option>Cereja e Avelã</option>
+    <option>Chá Verde</option><option>Flor de Cerejeira</option><option>Folhas de Figo</option>
+    <option>Lavanda Francesa</option><option>Melancia</option><option>Morango</option>
+    <option>Mousse de Maracujá</option><option>Oceano</option><option>Pistache</option>
+    <option>Rosas</option><option>Zimbro e Madeira Guaiac</option>
   </select>
   <div class="quantidade">
     <button class="btn" onclick="alterarQtd('recordacao', -1)">-</button>
@@ -296,41 +255,19 @@
   <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
 </div>
 
+  <!-- Carrinho -->
+<div class="carrinho">
+  <h2>Seu Pedido:</h2>
+  <ul id="carrinho"></ul>
+  <p><strong>Total: R$ <span id="total">0</span></strong></p>
+  <button class="limpar-btn" onclick="limparCarrinho()">Limpar Carrinho</button><br><br>
+  <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
+</div>
+
 <!-- Scripts -->
 <script>
   let carrinho = [];
   let total = 0;
-
-  const sliderState = {
-    love: 0,
-    recordacao: 0
-  };
-
-  function showSlide(produto, index) {
-    const slider = document.querySelectorAll(`#slider-${produto} img`);
-    slider.forEach((img, i) => {
-      img.classList.remove("active");
-      if (i === index) img.classList.add("active");
-    });
-    sliderState[produto] = index;
-  }
-
-  function nextSlide(produto) {
-    const imgs = document.querySelectorAll(`#slider-${produto} img`);
-    let newIndex = (sliderState[produto] + 1) % imgs.length;
-    showSlide(produto, newIndex);
-  }
-
-  function prevSlide(produto) {
-    const imgs = document.querySelectorAll(`#slider-${produto} img`);
-    let newIndex = (sliderState[produto] - 1 + imgs.length) % imgs.length;
-    showSlide(produto, newIndex);
-  }
-
-  window.onload = function () {
-    showSlide('love', 0);
-    showSlide('recordacao', 0);
-  };
 
   function fecharBoasVindas() {
     document.getElementById("popupBoasVindas").style.display = "none";
@@ -423,4 +360,3 @@
 
 </body>
 </html>
-
