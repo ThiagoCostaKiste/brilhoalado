@@ -12,6 +12,10 @@
       margin: 0;
       padding: 20px;
     }
+    h1 {
+      text-align: center;
+      color: #5f9ea0;
+    }
     .produto, .carrinho {
       background-color: #fff;
       border: 1px solid #dfe6e9;
@@ -24,17 +28,6 @@
     .produto h3, .produto p {
       text-align: center;
     }
-    select, .btn {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      font-weight: bold;
-      background-color: #cce6ff;
-      border: 1px solid #a3d2ff;
-      color: #004080;
-      cursor: pointer;
-    }
     .quantidade {
       display: flex;
       justify-content: center;
@@ -46,6 +39,18 @@
       width: 50px;
       text-align: center;
     }
+    select, .btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      font-weight: bold;
+      background-color: #cce6ff;
+      border: 1px solid #a3d2ff;
+      color: #004080;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
     .btn:hover {
       background-color: #b3ddff;
     }
@@ -53,16 +58,19 @@
       position: relative;
       text-align: center;
     }
-    .carousel-box img {
+    .carousel-box img,
+    .produto img {
       width: 60%;
       border-radius: 8px;
       display: none;
+      margin: 0 auto;
     }
     .carousel-box img.active {
       display: block;
     }
     .carousel-nav {
       margin-top: 10px;
+      text-align: center;
     }
     .carousel-nav button {
       background-color: #a3d2ff;
@@ -85,8 +93,39 @@
   </style>
 </head>
 <body>
+<h1>Brilho Alado</h1>
 
-<h1 style="text-align:center;">Brilho Alado</h1>
+  <!-- Vela Cappuccino -->
+<div class="produto">
+  <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino">
+  <h3>Vela Aromática Cappuccino</h3>
+  <p>Tamanho: 140g - R$ 65,00</p>
+  <p>Essência: Cappuccino</p>
+  <div class="quantidade">
+    <button class="btn" onclick="alterarQtd('cappuccino', -1)">-</button>
+    <input type="number" id="quantidade_cappuccino" value="1" min="1">
+    <button class="btn" onclick="alterarQtd('cappuccino', 1)">+</button>
+  </div>
+  <button class="btn" onclick="adicionarCarrinho('Vela Aromática Cappuccino', 65, '140g', 'Cappuccino', '', 'quantidade_cappuccino')">Adicionar</button>
+</div>
+
+<!-- Vela Melancia -->
+<div class="produto">
+  <img src="imagens/Vela_Melancia.jpg" alt="Vela Melancia">
+  <h3>Vela Melancia</h3>
+  <p>Tamanhos disponíveis:</p>
+  <select id="tamanho_melancia" class="btn">
+    <option value="180g|50">180g - R$ 50,00</option>
+    <option value="100g|45">100g - R$ 45,00</option>
+  </select>
+  <p>Essência: Melancia</p>
+  <div class="quantidade">
+    <button class="btn" onclick="alterarQtd('melancia', -1)">-</button>
+    <input type="number" id="quantidade_melancia" value="1" min="1">
+    <button class="btn" onclick="alterarQtd('melancia', 1)">+</button>
+  </div>
+  <button class="btn" onclick="adicionarMelancia()">Adicionar</button>
+</div>
 
 <!-- Vela Love -->
 <div class="produto">
@@ -101,7 +140,7 @@
     </div>
   </div>
   <p>Tamanho: 110g - R$ 40,00</p>
-  <label>Escolha a essência:</label>
+  <label for="essencia_love">Escolha a essência:</label>
   <select id="essencia_love" class="btn">
     <option value="">-- Selecione --</option>
     <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
@@ -112,7 +151,7 @@
     <option>Mousse de Maracujá</option><option>Oceano</option><option>Pistache</option>
     <option>Rosas</option><option>Zimbro e Madeira Guaiac</option>
   </select>
-  <label>Escolha a cor:</label>
+  <label for="cor_love">Escolha a cor:</label>
   <select id="cor_love" class="btn">
     <option value="">-- Selecione --</option>
     <option>Branco</option><option>Vermelho</option><option>Rosa</option>
@@ -139,7 +178,7 @@
   </div>
   <p>Tamanho: 80g</p>
   <p>Preço: 1 unid. R$ 30 | 2+ unid. R$ 25 cada</p>
-  <label>Escolha a essência:</label>
+  <label for="essencia_recordacao">Escolha a essência:</label>
   <select id="essencia_recordacao" class="btn">
     <option value="">-- Selecione --</option>
     <option>Algodão</option><option>Baunilha</option><option>Bergamota</option>
@@ -157,7 +196,6 @@
   </div>
   <button class="btn" onclick="adicionarRecordacao()">Adicionar</button>
 </div>
-
 <!-- Carrinho -->
 <div class="carrinho">
   <h2>Seu Pedido:</h2>
@@ -167,6 +205,7 @@
   <a id="enviar" href="#" target="_blank"><button class="btn">Enviar pedido via WhatsApp</button></a>
 </div>
 
+<!-- Scripts -->
 <script>
   let carrinho = [];
   let total = 0;
@@ -206,6 +245,21 @@
     const input = document.getElementById("quantidade_" + id);
     let novaQtd = parseInt(input.value) + delta;
     input.value = Math.max(1, novaQtd);
+  }
+
+  function adicionarCarrinho(nome, preco, tamanho, essencia, cor, qtdId) {
+    const quantidade = parseInt(document.getElementById(qtdId).value);
+    carrinho.push({ nome, preco, tamanho, essencia, cor, quantidade });
+    atualizarCarrinho();
+  }
+
+  function adicionarMelancia() {
+    const select = document.getElementById("tamanho_melancia").value.split("|");
+    const tamanho = select[0];
+    const preco = parseFloat(select[1]);
+    const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
+    carrinho.push({ nome: "Vela Melancia", preco, tamanho, essencia: "Melancia", cor: "", quantidade });
+    atualizarCarrinho();
   }
 
   function adicionarLove() {
