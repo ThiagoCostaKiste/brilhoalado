@@ -28,21 +28,12 @@
         .produto img {
             width: 50%;
             display: block;
-            margin: 0 auto 15px auto;
+            margin: 0 auto 10px auto;
             border-radius: 8px;
         }
-        button {
-            background-color: #a3d2ff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 15px;
-            color: #000;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        button:hover {
-            background-color: #8ac8ff;
+        .produto h3, .produto p {
+            text-align: center;
+            margin: 5px 0;
         }
         .quantidade {
             display: flex;
@@ -55,16 +46,40 @@
             width: 40px;
             text-align: center;
         }
+        button {
+            background-color: #a3d2ff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            color: #000;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #8ac8ff;
+        }
         ul {
-            padding-left: 20px;
+            padding-left: 0;
+            list-style: none;
         }
         .item-carrinho {
             display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+        .controles-carrinho {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 5px;
+            margin-top: 5px;
         }
-        .item-carrinho button {
+        .controles-carrinho input {
+            width: 40px;
+            text-align: center;
+        }
+        .remover {
             background-color: #ffb3b3;
             font-size: 0.9em;
             padding: 5px 10px;
@@ -99,7 +114,9 @@
             <input type="number" id="quantidade" value="1" min="1">
             <button onclick="alterarQtd(1)">+</button>
         </div>
-        <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65)">Adicionar</button>
+        <div style="text-align:center;">
+            <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65)">Adicionar</button>
+        </div>
     </div>
 
     <div class="carrinho">
@@ -122,40 +139,57 @@
 
         function adicionarAoCarrinho(produto, preco) {
             let quantidade = parseInt(document.getElementById("quantidade").value);
-            let itemExistente = carrinho.find(item => item.produto === produto);
-            if (itemExistente) {
-                itemExistente.quantidade += quantidade;
+            let item = carrinho.find(item => item.produto === produto);
+            if (item) {
+                item.quantidade += quantidade;
             } else {
                 carrinho.push({ produto, preco, quantidade });
             }
-            total += preco * quantidade;
             atualizarCarrinho();
         }
 
         function removerItem(index) {
-            total -= carrinho[index].preco * carrinho[index].quantidade;
             carrinho.splice(index, 1);
             atualizarCarrinho();
         }
 
         function limparCarrinho() {
             carrinho = [];
-            total = 0;
+            atualizarCarrinho();
+        }
+
+        function atualizarQuantidade(index, novaQtd) {
+            novaQtd = Math.max(1, parseInt(novaQtd));
+            carrinho[index].quantidade = novaQtd;
             atualizarCarrinho();
         }
 
         function atualizarCarrinho() {
             const lista = document.getElementById('carrinho');
             lista.innerHTML = '';
+            total = 0;
+
             carrinho.forEach((item, index) => {
+                const precoTotal = item.preco * item.quantidade;
+                total += precoTotal;
+
                 const li = document.createElement('li');
                 li.className = 'item-carrinho';
                 li.innerHTML = `
-                    ${item.quantidade}x ${item.produto} - R$ ${item.preco * item.quantidade}
-                    <button onclick="removerItem(${index})">Remover</button>
+                    <strong>${item.produto}</strong><br>
+                    <div class="controles-carrinho">
+                        <span>R$ ${precoTotal}</span>
+                        <div>
+                            <button onclick="alterarQuantidade(${index}, ${item.quantidade - 1})">-</button>
+                            <input type="number" value="${item.quantidade}" min="1" onchange="atualizarQuantidade(${index}, this.value)">
+                            <button onclick="alterarQuantidade(${index}, ${item.quantidade + 1})">+</button>
+                            <button class="remover" onclick="removerItem(${index})">Remover</button>
+                        </div>
+                    </div>
                 `;
                 lista.appendChild(li);
             });
+
             document.getElementById('total').textContent = total;
 
             let mensagem = 'Olá, gostaria de fazer um pedido:%0A';
@@ -165,6 +199,13 @@
             mensagem += `Total: R$ ${total}`;
             const numero = '5547991880797';
             document.getElementById('enviar').href = `https://wa.me/${numero}?text=${mensagem}`;
+        }
+
+        function alterarQuantidade(index, novaQtd) {
+            if (novaQtd >= 1) {
+                carrinho[index].quantidade = novaQtd;
+                atualizarCarrinho();
+            }
         }
     </script>
 </body>
