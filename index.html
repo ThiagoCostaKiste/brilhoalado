@@ -19,6 +19,15 @@
             height: 100%;
             object-fit: cover;
         }
+        .collapsed {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .expanded {
+            max-height: 200px;
+            transition: max-height 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
@@ -324,24 +333,44 @@
 
             total += itemTotal;
 
+            // Nova lógica para exibição do carrinho
+            const isRecordacao = item.id === 4;
+            const pricePerUnit = isRecordacao 
+                ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice)
+                : item.price;
+
             cartItems.innerHTML += `
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="font-medium">${item.name}</p>
-                        <p class="text-sm text-gray-600">Qtd: ${item.quantity}</p>
-                        ${item.options.weight ? `<p class="text-xs text-gray-500">Peso: ${item.options.weight}</p>` : ''}
-                        ${item.options.scent ? `<p class="text-xs text-gray-500">Essência: ${item.options.scent}</p>` : ''}
-                        ${item.options.color ? `<p class="text-xs text-gray-500">Cor: ${item.options.color}</p>` : ''}
+                <div class="border-b pb-4 mb-4 last:border-b-0 last:mb-0">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-medium">${item.name}</p>
+                            <p class="text-sm text-gray-600">Qtd: ${item.quantity}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-semibold">
+                                R$${itemTotal}
+                            </p>
+                            <button onclick="removeItem(${cart.indexOf(item)})" 
+                                class="text-xs text-red-500 hover:text-red-700 mt-1">
+                                Remover
+                            </button>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <p class="font-semibold">
-                            R$${itemTotal}
-                        </p>
-                        <button onclick="removeItem(${cart.indexOf(item)})" 
-                            class="text-xs text-red-500 hover:text-red-700 mt-1">
-                            Remover
-                        </button>
+                    
+                    <!-- Detalhes colapsáveis -->
+                    <div class="mt-2 transition-all duration-300 ease-in-out max-h-0 overflow-hidden">
+                        <div class="pl-4 text-sm text-gray-600">
+                            ${item.options.weight ? `Peso: ${item.options.weight}` : ''}
+                            ${item.options.scent ? ` | Essência: ${item.options.scent}` : ''}
+                            ${item.options.color ? ` | Cor: ${item.options.color}` : ''}
+                        </div>
                     </div>
+                    
+                    <!-- Botão para expandir/detalhar -->
+                    <button onclick="toggleDetails(this)" 
+                        class="text-xs text-blue-500 hover:text-blue-700 mt-1">
+                        ${item.showDetails ? 'Mostrar menos' : 'Ver detalhes'}
+                    </button>
                 </div>
             `;
         });
@@ -353,7 +382,7 @@
         const message = encodeURIComponent(`
             Olá! Gostaria de fazer o seguinte pedido:\n\n
             ${cart.map(item => 
-                `${item.quantity}x ${item.name} - R$${item.id === 4 
+                `${item.quantity}x ${item.name} - R$${isRecordacao 
                     ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice) 
                     : item.price} cada`
             ).join('\n')}\n\n
@@ -361,6 +390,14 @@
         `).replace(/%20/g, '+');
 
         whatsappLink.href = `https://wa.me/5547991880797?text= ${message}`;
+    }
+
+    // Função para alternar detalhes
+    function toggleDetails(element) {
+        const details = element.parentNode.querySelector('.transition-all');
+        details.classList.toggle('max-h-0');
+        details.classList.toggle('max-h-20'); // Ajuste a altura conforme necessário
+        element.textContent = element.textContent === 'Ver detalhes' ? 'Mostrar menos' : 'Ver detalhes';
     }
 
     // Remove item do carrinho
