@@ -1,22 +1,22 @@
-html_with_image = """
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <title>Brilho Alado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f6ff;
             color: #333;
             margin: 0;
-            padding: 40px;
+            padding: 20px;
         }
         h1 {
             color: #5f9ea0;
             text-align: center;
         }
-        .produto {
+        .produto, .carrinho {
             background-color: #ffffff;
             border: 1px solid #dfe6e9;
             border-radius: 8px;
@@ -26,9 +26,10 @@ html_with_image = """
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .produto img {
-            width: 100%;
+            width: 50%;
+            display: block;
+            margin: 0 auto 15px auto;
             border-radius: 8px;
-            margin-bottom: 10px;
         }
         button {
             background-color: #a3d2ff;
@@ -38,6 +39,7 @@ html_with_image = """
             color: #000;
             cursor: pointer;
             font-weight: bold;
+            margin-top: 10px;
         }
         button:hover {
             background-color: #8ac8ff;
@@ -45,13 +47,31 @@ html_with_image = """
         ul {
             padding-left: 20px;
         }
-        .carrinho {
-            max-width: 400px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .item-carrinho {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .item-carrinho button {
+            background-color: #ffb3b3;
+            font-size: 0.9em;
+            padding: 5px 10px;
+        }
+        .limpar-btn {
+            background-color: #ffc9c9;
+            margin-top: 10px;
+        }
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .produto, .carrinho {
+                width: 90%;
+                padding: 15px;
+            }
+            .produto img {
+                width: 70%;
+            }
         }
     </style>
 </head>
@@ -69,6 +89,7 @@ html_with_image = """
         <h2>Seu Pedido:</h2>
         <ul id="carrinho"></ul>
         <p><strong>Total: R$ <span id="total">0</span></strong></p>
+        <button class="limpar-btn" onclick="limparCarrinho()">Limpar Carrinho</button><br><br>
         <a id="enviar" href="#" target="_blank"><button>Enviar pedido via WhatsApp</button></a>
     </div>
 
@@ -77,17 +98,33 @@ html_with_image = """
         let total = 0;
 
         function adicionarAoCarrinho(produto, preco) {
-            carrinho.push({produto, preco});
+            carrinho.push({ produto, preco });
             total += preco;
+            atualizarCarrinho();
+        }
+
+        function removerItem(index) {
+            total -= carrinho[index].preco;
+            carrinho.splice(index, 1);
+            atualizarCarrinho();
+        }
+
+        function limparCarrinho() {
+            carrinho = [];
+            total = 0;
             atualizarCarrinho();
         }
 
         function atualizarCarrinho() {
             const lista = document.getElementById('carrinho');
             lista.innerHTML = '';
-            carrinho.forEach(item => {
+            carrinho.forEach((item, index) => {
                 const li = document.createElement('li');
-                li.textContent = `${item.produto} - R$ ${item.preco}`;
+                li.className = 'item-carrinho';
+                li.innerHTML = `
+                    ${item.produto} - R$ ${item.preco}
+                    <button onclick="removerItem(${index})">Remover</button>
+                `;
                 lista.appendChild(li);
             });
             document.getElementById('total').textContent = total;
@@ -103,4 +140,3 @@ html_with_image = """
     </script>
 </body>
 </html>
-"""
