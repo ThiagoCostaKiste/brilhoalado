@@ -17,46 +17,40 @@
       text-align: center;
     }
     .produto, .carrinho {
-      background-color: #ffffff;
+      background-color: #fff;
       border: 1px solid #dfe6e9;
       border-radius: 8px;
       padding: 20px;
       margin: 20px auto;
-      max-width: 400px;
+      max-width: 500px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     .produto img {
-      width: 50%;
       display: block;
-      margin: 0 auto 10px auto;
+      margin: 0 auto 10px;
+      width: 60%;
       border-radius: 8px;
     }
     .produto h3, .produto p {
       text-align: center;
-      margin: 5px 0;
     }
     .quantidade {
       display: flex;
+      justify-content: center;
       align-items: center;
       gap: 10px;
-      justify-content: center;
       margin: 10px 0;
     }
     .quantidade input {
-      width: 40px;
+      width: 50px;
       text-align: center;
     }
     select, button {
-      background-color: #a3d2ff;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 15px;
-      color: #000;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    select {
       width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      font-weight: bold;
     }
     .remover {
       background-color: #ffb3b3;
@@ -70,38 +64,88 @@
   </style>
 </head>
 <body>
+
 <h1>Brilho Alado</h1>
 
+<!-- Vela Cappuccino -->
 <div class="produto">
-  <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino" />
+  <img src="imagens/Vela_Cappuccino.jpg" alt="Vela Aromática Cappuccino">
   <h3>Vela Aromática Cappuccino</h3>
-  <p>R$ 65,00</p>
+  <p>Tamanho: 140g - R$ 65,00</p>
+  <p>Essência: Cappuccino</p>
   <div class="quantidade">
     <button onclick="alterarQtd('cappuccino', -1)">-</button>
-    <input type="number" id="quantidade_cappuccino" value="1" min="1" />
+    <input type="number" id="quantidade_cappuccino" value="1" min="1">
     <button onclick="alterarQtd('cappuccino', 1)">+</button>
   </div>
-  <div style="text-align:center;">
-    <button onclick="adicionarAoCarrinho('Vela Aromática Cappuccino', 65, 'cappuccino')">Adicionar</button>
-  </div>
+  <button onclick="adicionarCarrinho('Vela Aromática Cappuccino', 65, '140g', 'Cappuccino', '', 'quantidade_cappuccino')">Adicionar</button>
 </div>
 
+<!-- Vela Melancia -->
 <div class="produto">
-  <img src="imagens/Vela_Melancia.jpg" alt="Vela Melancia" />
+  <img src="imagens/Vela_Melancia.jpg" alt="Vela Melancia">
   <h3>Vela Melancia</h3>
-  <p>Escolha o tamanho:</p>
-  <select id="tamanho_melancia" onchange="atualizarPrecoMelancia()">
+  <p>Tamanhos disponíveis:</p>
+  <select id="tamanho_melancia">
     <option value="180g|50">180g - R$ 50,00</option>
     <option value="100g|45">100g - R$ 45,00</option>
   </select>
+  <p>Essência: Melancia</p>
   <div class="quantidade">
     <button onclick="alterarQtd('melancia', -1)">-</button>
-    <input type="number" id="quantidade_melancia" value="1" min="1" />
+    <input type="number" id="quantidade_melancia" value="1" min="1">
     <button onclick="alterarQtd('melancia', 1)">+</button>
   </div>
-  <div style="text-align:center;">
-    <button onclick="adicionarVelaMelancia()">Adicionar</button>
+  <button onclick="adicionarMelancia()">Adicionar</button>
+</div>
+
+<!-- Vela Love -->
+<div class="produto">
+  <img src="imagens/Vela_Love.jpg" alt="Vela Love">
+  <img src="imagens/Vela_Love_2.jpg" alt="Vela Love 2">
+  <img src="imagens/Vela_Love_3.jpg" alt="Vela Love 3">
+  <h3>Vela Love</h3>
+  <p>Tamanho: 110g - R$ 40,00</p>
+  <label for="essencia_love">Escolha a essência:</label>
+  <select id="essencia_love">
+    <option value="">-- Selecione --</option>
+    <option>Algodão</option>
+    <option>Baunilha</option>
+    <option>Bergamota</option>
+    <option>Café com Chocolate</option>
+    <option>Canela</option>
+    <option>Cappuccino</option>
+    <option>Capim Limão</option>
+    <option>Cassis e Hibisco</option>
+    <option>Cereja e Avelã</option>
+    <option>Chá Verde</option>
+    <option>Flor de Cerejeira</option>
+    <option>Folhas de Figo</option>
+    <option>Lavanda Francesa</option>
+    <option>Melancia</option>
+    <option>Morango</option>
+    <option>Mousse de Maracujá</option>
+    <option>Oceano</option>
+    <option>Pistache</option>
+    <option>Rosas</option>
+    <option>Zimbro e Madeira Guaiac</option>
+  </select>
+  <label for="cor_love">Escolha a cor:</label>
+  <select id="cor_love">
+    <option value="">-- Selecione --</option>
+    <option>Branco</option>
+    <option>Vermelho</option>
+    <option>Rosa</option>
+    <option>Lilás</option>
+    <option>Azul</option>
+    <option>Amarelo</option>
+  </select>
+  <div class="quantidade">
+    <button onclick="alterarQtd('love', -1)">-</button>
+    <input type="number" id="quantidade_love" value="1" min="1">
+    <button onclick="alterarQtd('love', 1)">+</button>
   </div>
+  <button onclick="adicionarLove()">Adicionar</button>
 </div>
 
 <div class="carrinho">
@@ -113,65 +157,78 @@
 </div>
 
 <script>
-  let carrinho = [];
-  let total = 0;
+let carrinho = [];
+let total = 0;
 
-  function alterarQtd(id, delta) {
-    const input = document.getElementById("quantidade_" + id);
-    let novaQtd = parseInt(input.value) + delta;
-    input.value = Math.max(1, novaQtd);
+function alterarQtd(id, delta) {
+  const input = document.getElementById("quantidade_" + id);
+  let novaQtd = parseInt(input.value) + delta;
+  input.value = Math.max(1, novaQtd);
+}
+
+function adicionarCarrinho(nome, preco, tamanho, essencia, cor, qtdId) {
+  const quantidade = parseInt(document.getElementById(qtdId).value);
+  carrinho.push({ nome, preco, tamanho, essencia, cor, quantidade });
+  atualizarCarrinho();
+}
+
+function adicionarMelancia() {
+  const select = document.getElementById("tamanho_melancia").value.split("|");
+  const tamanho = select[0];
+  const preco = parseFloat(select[1]);
+  const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
+  carrinho.push({ nome: "Vela Melancia", preco, tamanho, essencia: "Melancia", cor: "", quantidade });
+  atualizarCarrinho();
+}
+
+function adicionarLove() {
+  const essencia = document.getElementById("essencia_love").value;
+  const cor = document.getElementById("cor_love").value;
+  const quantidade = parseInt(document.getElementById("quantidade_love").value);
+  if (!essencia || !cor) {
+    alert("Por favor, selecione a essência e a cor.");
+    return;
   }
+  carrinho.push({ nome: "Vela Love", preco: 40, tamanho: "110g", essencia, cor, quantidade });
+  atualizarCarrinho();
+}
 
-  function adicionarAoCarrinho(produto, preco, id) {
-    const quantidade = parseInt(document.getElementById("quantidade_" + id).value);
-    carrinho.push({ produto, preco, quantidade });
-    atualizarCarrinho();
-  }
+function removerItem(index) {
+  carrinho.splice(index, 1);
+  atualizarCarrinho();
+}
 
-  function adicionarVelaMelancia() {
-    const select = document.getElementById("tamanho_melancia").value.split("|");
-    const tamanho = select[0];
-    const preco = parseFloat(select[1]);
-    const quantidade = parseInt(document.getElementById("quantidade_melancia").value);
-    const produto = "Vela Melancia " + tamanho;
-    carrinho.push({ produto, preco, quantidade });
-    atualizarCarrinho();
-  }
+function limparCarrinho() {
+  carrinho = [];
+  atualizarCarrinho();
+}
 
-  function removerItem(index) {
-    carrinho.splice(index, 1);
-    atualizarCarrinho();
-  }
+function atualizarCarrinho() {
+  const lista = document.getElementById("carrinho");
+  lista.innerHTML = "";
+  total = 0;
+  carrinho.forEach((item, index) => {
+    const subtotal = item.preco * item.quantidade;
+    total += subtotal;
+    const li = document.createElement("li");
+    li.innerHTML =
+      `<strong>${item.quantidade}x ${item.nome}</strong><br>` +
+      `Tamanho: ${item.tamanho}<br>` +
+      `Essência: ${item.essencia}<br>` +
+      (item.cor ? `Cor: ${item.cor}<br>` : "") +
+      `R$ ${subtotal}<br>` +
+      `<button class="remover" onclick="removerItem(${index})">Remover</button>`;
+    lista.appendChild(li);
+  });
+  document.getElementById("total").textContent = total;
 
-  function limparCarrinho() {
-    carrinho = [];
-    atualizarCarrinho();
-  }
-
-  function atualizarCarrinho() {
-    const lista = document.getElementById("carrinho");
-    lista.innerHTML = "";
-    total = 0;
-    carrinho.forEach((item, index) => {
-      const subtotal = item.preco * item.quantidade;
-      total += subtotal;
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <strong>${item.quantidade}x ${item.produto}</strong><br>
-        R$ ${subtotal}<br>
-        <button class="remover" onclick="removerItem(${index})">Remover</button>
-      `;
-      lista.appendChild(li);
-    });
-
-    document.getElementById("total").textContent = total;
-    let mensagem = "Olá, gostaria de fazer um pedido:%0A";
-    carrinho.forEach(item => {
-      mensagem += `- ${item.quantidade}x ${item.produto} - R$ ${item.preco * item.quantidade}%0A`;
-    });
-    mensagem += `Total: R$ ${total}`;
-    document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
-  }
+  let mensagem = "Olá, gostaria de fazer um pedido:%0A";
+  carrinho.forEach(item => {
+    mensagem += `- ${item.quantidade}x ${item.nome} [${item.tamanho}, ${item.essencia}${item.cor ? ", " + item.cor : ""}] - R$ ${item.preco * item.quantidade}%0A`;
+  });
+  mensagem += `Total: R$ ${total}`;
+  document.getElementById("enviar").href = "https://wa.me/5547991880797?text=" + mensagem;
+}
 </script>
 </body>
 </html>
