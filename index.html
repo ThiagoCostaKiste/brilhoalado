@@ -1,326 +1,381 @@
-```jsx
-import { useState, useEffect } from 'react';
-
-const productsData = [
-  {
-    id: 1,
-    name: 'Vela Cappuccino',
-    images: ['Vela_Cappuccino'],
-    weight: '140g',
-    price: 65,
-    scent: 'Cappuccino',
-    color: 'Fixo'
-  },
-  {
-    id: 2,
-    name: 'Vela Melancia',
-    images: ['Vela_Melancia'],
-    weightOptions: [
-      { value: '100g', price: 45 },
-      { value: '180g', price: 50 }
-    ],
-    scent: 'Melancia',
-    color: 'Fixo'
-  },
-  {
-    id: 3,
-    name: 'Vela Love',
-    images: ['Vela_Love_1', 'Vela_Love_2', 'Vela_Love_3'],
-    weight: '110g',
-    price: 40,
-    scentOptions: [
-      'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
-      'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
-      'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
-      'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
-      'Rosas', 'Zimbro e Madeira Guaiac'
-    ],
-    colorOptions: ['Azul', 'Rosa', 'Amarelo', 'Branco', 'Laranja']
-  },
-  {
-    id: 4,
-    name: 'Vela Recordação',
-    images: ['Vela_Recordacao_1', 'Vela_Recordacao_2', 'Vela_Recordacao_3'],
-    weight: '80g',
-    basePrice: 30,
-    discountPrice: 25,
-    scentOptions: [
-      'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
-      'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
-      'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
-      'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
-      'Rosas', 'Zimbro e Madeira Guaiac'
-    ]
-  }
-];
-
-export default function App() {
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [cart, setCart] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  
-  useEffect(() => {
-    const timer = setTimeout(() => setShowWelcome(false), 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleAddToCart = (product, quantity, selectedOptions) => {
-    const existingItem = cart.find(item => 
-      item.id === product.id &&
-      JSON.stringify(item.options) === JSON.stringify(selectedOptions)
-    );
-
-    if (existingItem) {
-      const updatedCart = cart.map(item =>
-        item.id === product.id &&
-        JSON.stringify(item.options) === JSON.stringify(selectedOptions)
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      );
-      setCart(updatedCart);
-    } else {
-      setCart([...cart, { ...product, quantity, options: selectedOptions }]);
-    }
-  };
-
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => {
-      if (item.id === 4) {
-        const recordacaoCount = cart.filter(i => i.id === 4).reduce((sum, i) => sum + i.quantity, 0);
-        const price = recordacaoCount >= 2 ? item.discountPrice : item.basePrice;
-        return total + (price * item.quantity);
-      }
-      return total + (item.price * item.quantity);
-    }, 0);
-  };
-
-  const generateWhatsAppMessage = () => {
-    const items = cart.map(item => 
-      `${item.quantity}x ${item.name} - R$${item.id === 4 ? (cart.filter(i => i.id === 4).reduce((sum, i) => sum + i.quantity, 0) >= 2 ? item.discountPrice : item.basePrice) : item.price} cada`
-    ).join('\n');
-    
-    return `Olá! Gostaria de fazer um pedido:\n\n${items}\n\nTotal: R$${calculateTotal()}${selectedProduct ? `\n\nProduto em visualização: ${selectedProduct.name}` : ''}`;
-  };
-
-  return (
-    <div className="min-h-screen bg-blue-50 font-sans">
-      {/* Welcome Modal */}
-      {showWelcome && (
-        <div className="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center p-4">
-          <div className="max-w-md text-center space-y-4">
-            <h1 className="text-2xl font-semibold text-blue-600">Bem-vindo à Brilho Alado!</h1>
-            <p className="text-gray-700">
-              Nossas velas artesanais são feitas com carinho e podem ter pequenas variações únicas.
-              Alguns produtos permitem personalização de cor, essência e tamanho.
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brilho Alado - Velas Aromáticas</title>
+    <script src="https://cdn.tailwindcss.com "></script>
+    <style>
+        .modal {
+            transition: opacity 0.3s;
+        }
+        .carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .carousel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .carousel::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-blue-50 min-h-screen">
+    <!-- Modal de Boas-Vindas -->
+    <div id="welcomeModal" class="fixed inset-0 bg-white bg-opacity-95 flex flex-col items-center justify-center p-4">
+        <div class="max-w-md text-center space-y-4">
+            <h1 class="text-2xl font-semibold text-blue-600">Bem-vindo à Brilho Alado!</h1>
+            <p class="text-gray-700">
+                Nossas velas artesanais são feitas com carinho e podem ter pequenas variações únicas.
+                Alguns produtos permitem personalização de cor, essência e tamanho.
             </p>
-            <button 
-              onClick={() => setShowWelcome(false)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
-            >
-              Começar
+            <button onclick="closeWelcome()"
+                class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition">
+                Começar
             </button>
-          </div>
         </div>
-      )}
+    </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto p-4 pt-20">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-blue-800">Catálogo de Velas Aromáticas</h1>
-          <p className="text-blue-600">Produtos 100% artesanais com essências exclusivas</p>
+    <!-- Conteúdo Principal -->
+    <div class="container mx-auto p-4 pt-20">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-blue-800">Catálogo de Velas Aromáticas</h1>
+            <p class="text-blue-600">Produtos 100% artesanais com essências exclusivas</p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {productsData.map(product => (
-            <div key={product.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-              <div className="relative">
-                {product.images.length > 1 ? (
-                  <div className="flex overflow-x-auto snap-x">
-                    {product.images.map((img, index) => (
-                      <img
-                        key={index}
-                        src={`https://placehold.co/400x300/${product.colorOptions ? product.colorOptions[index % product.colorOptions.length].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.png?text=${product.name}`}
-                        alt={product.name}
-                        className="w-full h-48 object-cover snap-center"
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <img
-                    src={`https://placehold.co/400x300/${product.color || 'blue'}/FFFFFF.png?text=${product.name}`}
-                    alt={product.name}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-              </div>
-
-              <div className="p-4 space-y-2">
-                <h3 className="font-semibold text-blue-800">{product.name}</h3>
-                <p className="text-sm text-gray-600">
-                  {product.weightOptions ? (
-                    <>
-                      Peso: 
-                      {product.weightOptions.map(option => (
-                        <span key={option.value} className="ml-1">
-                          {option.value} (R${option.price})
-                        </span>
-                      ))}
-                    </>
-                  ) : (
-                    `Peso: ${product.weight}`
-                  )}
-                </p>
-                <p>Essência: {product.scent || 'Selecione'}</p>
-                <p>Cor: {product.color || 'Selecione'}</p>
-                <div className="flex justify-between items-center">
-                  <button
-                    onClick={() => setSelectedProduct(product)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition"
-                  >
-                    Ver detalhes
-                  </button>
-                  <span className="font-bold text-blue-800">
-                    {product.basePrice ? `R$${product.basePrice}` : `R$${product.price}`}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div id="products" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Produtos serão inseridos aqui via JavaScript -->
         </div>
-
-        {/* Product Modal */}
-        {selectedProduct && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
-              <button 
-                onClick={() => setSelectedProduct(null)}
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              >
-                &times;
-              </button>
-              <h2 className="text-xl font-semibold">{selectedProduct.name}</h2>
-              <div className="flex justify-center">
-                {selectedProduct.images.length > 1 ? (
-                  <div className="flex overflow-x-auto snap-x w-full">
-                    {selectedProduct.images.map((img, index) => (
-                      <img
-                        key={index}
-                        src={`https://placehold.co/400x300/${selectedProduct.colorOptions ? selectedProduct.colorOptions[index % selectedProduct.colorOptions.length].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.png?text=${selectedProduct.name}`}
-                        alt={selectedProduct.name}
-                        className="w-40 h-40 object-cover snap-center"
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <img
-                    src={`https://placehold.co/400x300/${selectedProduct.color || 'blue'}/FFFFFF.png?text=${selectedProduct.name}`}
-                    alt={selectedProduct.name}
-                    className="w-40 h-40 object-cover"
-                  />
-                )}
-              </div>
-              <div className="space-y-2">
-                {selectedProduct.weightOptions && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Peso:</label>
-                    <select className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                      {selectedProduct.weightOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.value} - R${option.price}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                {selectedProduct.scentOptions && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Essência:</label>
-                    <select className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                      {selectedProduct.scentOptions.map(scent => (
-                        <option key={scent} value={scent}>
-                          {scent}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                {selectedProduct.colorOptions && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Cor:</label>
-                    <select className="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
-                      {selectedProduct.colorOptions.map(color => (
-                        <option key={color} value={color}>
-                          {color}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-                <div className="flex items-center space-x-2">
-                  <label className="block text-sm font-medium text-gray-700">Quantidade:</label>
-                  <input 
-                    type="number" 
-                    min="1"
-                    className="mt-1 block w-20 border-gray-300 rounded-md shadow-sm"
-                  />
-                </div>
-                <button className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
-                  Adicionar ao Carrinho
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Cart Sidebar */}
-        <div className="fixed bottom-0 right-0 bg-white w-full md:w-96 h-64 md:h-screen border-t md:border-l border-gray-200 p-4">
-          <h3 className="font-semibold text-lg text-blue-800 mb-4">Carrinho</h3>
-          {cart.length === 0 ? (
-            <p className="text-gray-600">Seu carrinho está vazio</p>
-          ) : (
-            <div className="space-y-2 overflow-y-auto h-40">
-              {cart.map(item => (
-                <div key={item.id} className="flex justify-between items-center">
-                  <div>
-                    <p className="font-medium">{item.name}</p>
-                    <p className="text-sm text-gray-600">Qtd: {item.quantity}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold">
-                      {item.id === 4 
-                        ? (cart.filter(i => i.id === 4).reduce((sum, i) => sum + i.quantity, 0) >= 2 
-                          ? `R$${item.discountPrice * item.quantity}` 
-                          : `R$${item.basePrice * item.quantity}`)
-                        : `R$${item.price * item.quantity}`}
-                    </p>
-                    <button className="text-xs text-red-500 hover:text-red-700">
-                      Remover
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="mt-4">
-            <p className="font-bold text-blue-800">Total: R${calculateTotal()}</p>
-            <a 
-              href={`https://wa.me/5547991880797?text=${encodeURIComponent(generateWhatsAppMessage())}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-green-500 text-white py-2 rounded-md block text-center hover:bg-green-600 transition mt-4"
-            >
-              Enviar Pedido via WhatsApp
-            </a>
-            <button 
-              onClick={() => setCart([])}
-              className="w-full bg-red-500 text-white py-2 rounded-md block text-center hover:bg-red-600 transition mt-2"
-            >
-              Limpar Carrinho
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
-  );
-}
-```
+
+    <!-- Modal de Detalhes do Produto -->
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full space-y-4">
+            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <h2 id="modalTitle" class="text-xl font-semibold"></h2>
+            <div class="carousel flex overflow-x-auto gap-2 pb-2">
+                <!-- Imagens do carrossel aqui -->
+            </div>
+            <div id="modalContent"></div>
+            <button onclick="addToCart()" 
+                class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
+                Adicionar ao Carrinho
+            </button>
+        </div>
+    </div>
+
+    <!-- Carrinho Lateral -->
+    <div id="cartSidebar" class="fixed bottom-0 right-0 bg-white w-full md:w-96 h-64 md:h-screen border-t md:border-l border-gray-200 p-4">
+        <h3 class="font-semibold text-lg text-blue-800 mb-4">Carrinho</h3>
+        <div id="cartItems" class="space-y-2 overflow-y-auto h-40"></div>
+        <div class="mt-4">
+            <p id="totalPrice" class="font-bold text-blue-800">Total: R$0</p>
+            <a id="whatsappLink" href="#" target="_blank" 
+                class="w-full bg-green-500 text-white py-2 rounded-md block text-center hover:bg-green-600 transition mt-4">
+                Enviar Pedido via WhatsApp
+            </a>
+            <button onclick="clearCart()" 
+                class="w-full bg-red-500 text-white py-2 rounded-md block text-center hover:bg-red-600 transition mt-2">
+                Limpar Carrinho
+            </button>
+        </div>
+    </div>
+
+<script>
+    // Dados dos produtos
+    const products = [
+        {
+            id: 1,
+            name: 'Vela Cappuccino',
+            images: ['Vela_Cappuccino'],
+            weight: '140g',
+            price: 65,
+            scent: 'Cappuccino',
+            color: 'Fixo'
+        },
+        {
+            id: 2,
+            name: 'Vela Melancia',
+            images: ['Vela_Melancia'],
+            weightOptions: [
+                { value: '100g', price: 45 },
+                { value: '180g', price: 50 }
+            ],
+            scent: 'Melancia',
+            color: 'Fixo'
+        },
+        {
+            id: 3,
+            name: 'Vela Love',
+            images: ['Vela_Love_1', 'Vela_Love_2', 'Vela_Love_3'],
+            weight: '110g',
+            price: 40,
+            scentOptions: [
+                'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
+                'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
+                'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
+                'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
+                'Rosas', 'Zimbro e Madeira Guaiac'
+            ],
+            colorOptions: ['Azul', 'Rosa', 'Amarelo', 'Branco', 'Laranja']
+        },
+        {
+            id: 4,
+            name: 'Vela Recordação',
+            images: ['Vela_Recordacao_1', 'Vela_Recordacao_2', 'Vela_Recordacao_3'],
+            weight: '80g',
+            basePrice: 30,
+            discountPrice: 25,
+            scentOptions: [
+                'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
+                'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
+                'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
+                'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
+                'Rosas', 'Zimbro e Madeira Guaiac'
+            ]
+        }
+    ];
+
+    // Variáveis globais
+    let cart = [];
+    let currentProduct = null;
+
+    // Inicialização
+    function init() {
+        renderProducts();
+        setTimeout(closeWelcome, 5000);
+    }
+
+    // Renderização dos produtos
+    function renderProducts() {
+        const container = document.getElementById('products');
+        container.innerHTML = products.map(product => `
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                <div class="relative">
+                    ${product.images.length > 1 ? 
+                        `<div class="flex overflow-x-auto gap-2 pb-2">
+                            ${product.images.map(img => `
+                                <img src="https://placehold.co/400x300/ ${product.colorOptions ? product.colorOptions[0].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.png?text=${product.name}" 
+                                    class="w-32 h-32 object-cover">
+                            `).join('')}
+                        </div>`
+                    : 
+                        `<img src="https://placehold.co/400x300/ ${product.color || 'blue'}/FFFFFF.png?text=${product.name}" 
+                            class="w-full h-48 object-cover">`
+                    }
+                </div>
+                <div class="p-4 space-y-2">
+                    <h3 class="font-semibold text-blue-800">${product.name}</h3>
+                    <p class="text-sm text-gray-600">
+                        ${product.weightOptions ? 
+                            'Peso: ' + product.weightOptions.map(opt => `${opt.value} (R$${opt.price})`).join(' | ')
+                        : `Peso: ${product.weight}`}
+                    </p>
+                    <p>Essência: ${product.scent || 'Selecione'}</p>
+                    <p>Cor: ${product.color || 'Selecione'}</p>
+                    <button onclick="openModal(${product.id})"
+                        class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition">
+                        Ver detalhes
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Controle do modal de boas-vindas
+    function closeWelcome() {
+        document.getElementById('welcomeModal').style.display = 'none';
+    }
+
+    // Abre o modal de produto
+    function openModal(productId) {
+        currentProduct = products.find(p => p.id === productId);
+        const modal = document.getElementById('productModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const carousel = modal.querySelector('.carousel');
+
+        modalTitle.textContent = currentProduct.name;
+
+        // Renderiza carrossel de imagens
+        carousel.innerHTML = currentProduct.images.map(img => `
+            <img src="https://placehold.co/400x300/ ${currentProduct.colorOptions ? currentProduct.colorOptions[0].toLowerCase().replace(' ', '') : 'blue'}/FFFFFF.png?text=${currentProduct.name}" 
+                class="w-32 h-32 object-cover">
+        `).join('');
+
+        // Renderiza opções do produto
+        modalContent.innerHTML = `
+            ${currentProduct.weightOptions ? `
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Peso:</label>
+                    <select id="weightSelect" class="w-full border-gray-300 rounded-md shadow-sm">
+                        ${currentProduct.weightOptions.map(opt => `
+                            <option value="${opt.value}">${opt.value} - R$${opt.price}</option>
+                        `).join('')}
+                    </select>
+                </div>
+            ` : ''}
+            
+            ${currentProduct.scentOptions ? `
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Essência:</label>
+                    <select id="scentSelect" class="w-full border-gray-300 rounded-md shadow-sm">
+                        ${currentProduct.scentOptions.map(opt => `
+                            <option value="${opt}">${opt}</option>
+                        `).join('')}
+                    </select>
+                </div>
+            ` : ''}
+            
+            ${currentProduct.colorOptions ? `
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Cor:</label>
+                    <select id="colorSelect" class="w-full border-gray-300 rounded-md shadow-sm">
+                        ${currentProduct.colorOptions.map(opt => `
+                            <option value="${opt}">${opt}</option>
+                        `).join('')}
+                    </select>
+                </div>
+            ` : ''}
+            
+            <div class="flex items-center space-x-2 mb-4">
+                <label class="block text-sm font-medium text-gray-700">Quantidade:</label>
+                <input type="number" id="quantityInput" min="1" value="1" 
+                    class="mt-1 block w-20 border-gray-300 rounded-md shadow-sm">
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+    }
+
+    // Fecha o modal
+    function closeModal() {
+        document.getElementById('productModal').style.display = 'none';
+    }
+
+    // Adiciona ao carrinho
+    function addToCart() {
+        const quantity = parseInt(document.getElementById('quantityInput')?.value || 1);
+        const productCopy = {...currentProduct};
+        
+        // Captura opções selecionadas
+        if (currentProduct.weightOptions) {
+            productCopy.selectedWeight = document.getElementById('weightSelect').value;
+            productCopy.price = currentProduct.weightOptions
+                .find(opt => opt.value === productCopy.selectedWeight).price;
+        }
+        
+        if (currentProduct.scentOptions) {
+            productCopy.selectedScent = document.getElementById('scentSelect').value;
+        }
+        
+        if (currentProduct.colorOptions) {
+            productCopy.selectedColor = document.getElementById('colorSelect').value;
+        }
+
+        // Verifica se já existe no carrinho
+        const existingIndex = cart.findIndex(item => 
+            item.id === productCopy.id &&
+            JSON.stringify(item.options) === JSON.stringify({
+                weight: productCopy.selectedWeight,
+                scent: productCopy.selectedScent,
+                color: productCopy.selectedColor
+            })
+        );
+
+        if (existingIndex >= 0) {
+            cart[existingIndex].quantity += quantity;
+        } else {
+            cart.push({
+                ...productCopy,
+                quantity: quantity,
+                options: {
+                    weight: productCopy.selectedWeight,
+                    scent: productCopy.selectedScent,
+                    color: productCopy.selectedColor
+                }
+            });
+        }
+
+        updateCart();
+        closeModal();
+    }
+
+    // Atualiza o carrinho
+    function updateCart() {
+        const cartItems = document.getElementById('cartItems');
+        const totalPrice = document.getElementById('totalPrice');
+        const whatsappLink = document.getElementById('whatsappLink');
+
+        // Limpa carrinho
+        cartItems.innerHTML = '';
+
+        // Calcula total
+        let total = 0;
+        const recordacaoCount = cart.filter(item => item.id === 4).reduce((sum, item) => sum + item.quantity, 0);
+
+        // Renderiza itens
+        cart.forEach(item => {
+            const itemTotal = item.id === 4 
+                ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice) * item.quantity
+                : item.price * item.quantity;
+
+            total += itemTotal;
+
+            cartItems.innerHTML += `
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="font-medium">${item.name}</p>
+                        <p class="text-sm text-gray-600">Qtd: ${item.quantity}</p>
+                        ${item.options.weight ? `<p class="text-xs text-gray-500">Peso: ${item.options.weight}</p>` : ''}
+                        ${item.options.scent ? `<p class="text-xs text-gray-500">Essência: ${item.options.scent}</p>` : ''}
+                        ${item.options.color ? `<p class="text-xs text-gray-500">Cor: ${item.options.color}</p>` : ''}
+                    </div>
+                    <div class="text-right">
+                        <p class="font-semibold">
+                            R$${itemTotal}
+                        </p>
+                        <button onclick="removeItem(${cart.indexOf(item)})" 
+                            class="text-xs text-red-500 hover:text-red-700 mt-1">
+                            Remover
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Atualiza total
+        totalPrice.textContent = `Total: R$${total}`;
+
+        // Atualiza link do WhatsApp
+        const message = encodeURIComponent(`
+            Olá! Gostaria de fazer o seguinte pedido:\n\n
+            ${cart.map(item => 
+                `${item.quantity}x ${item.name} - R$${item.id === 4 
+                    ? (recordacaoCount >= 2 ? item.discountPrice : item.basePrice) 
+                    : item.price} cada`
+            ).join('\n')}\n\n
+            Total: R$${total}
+        `).replace(/%20/g, '+');
+
+        whatsappLink.href = `https://wa.me/5547991880797?text= ${message}`;
+    }
+
+    // Remove item do carrinho
+    function removeItem(index) {
+        cart.splice(index, 1);
+        updateCart();
+    }
+
+    // Limpa carrinho
+    function clearCart() {
+        cart = [];
+        updateCart();
+    }
+
+    // Inicializa tudo
+    init();
+</script>
+</body>
+</html>
