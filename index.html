@@ -6,104 +6,263 @@
     <title>Brilho Alado - Velas Aromáticas</title>
     <style>
         :root {
-            --cor-primaria: #B0E0E6;
-            --cor-secundaria: #F5F5F5;
+            --cor-primaria: #E3F6FC;
+            --cor-destaque: #B0E0E6;
+            --cor-texto: #4A4A4A;
+            --cor-borda: #E0E0E0;
         }
 
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: var(--cor-secundaria);
+            background-color: #F9FEFF;
+            color: var(--cor-texto);
+            line-height: 1.5;
         }
 
-        .welcome-message {
-            text-align: center;
-            background-color: var(--cor-primaria);
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
             padding: 20px;
-            border-radius: 10px;
+            text-align: center;
+        }
+
+        .welcome-modal h2 {
+            color: #6D8B9B;
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+
+        .welcome-modal p {
+            max-width: 500px;
             margin-bottom: 30px;
+            color: #5A5A5A;
         }
 
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .product-card {
             background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--cor-borda);
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .product-title {
+            font-size: 1.1em;
+            margin: 0 0 10px 0;
+            color: #5A7A8C;
         }
 
         .product-image {
-            max-width: 200px;
-            height: auto;
-            border-radius: 5px;
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid var(--cor-borda);
         }
 
         .carousel {
             display: flex;
+            gap: 8px;
             overflow-x: auto;
+            scrollbar-width: thin;
+            padding-bottom: 5px;
+        }
+
+        .carousel::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .carousel::-webkit-scrollbar-thumb {
+            background: var(--cor-destaque);
+            border-radius: 2px;
+        }
+
+        .product-detail {
+            margin: 8px 0;
+            font-size: 0.9em;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #4A7A8C;
+            margin: 15px 0;
+        }
+
+        .add-to-cart {
+            display: flex;
             gap: 10px;
+            align-items: center;
+            margin-top: 15px;
         }
 
         .cart {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 25px;
+            right: 25px;
             background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            max-width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            max-width: 350px;
+            width: 90%;
+            z-index: 100;
+            overflow: hidden;
         }
 
         .cart.collapsed {
             max-height: 50px;
+            background: var(--cor-destaque);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            cursor: pointer;
+            background: var(--cor-destaque);
+        }
+
+        .cart-content {
+            max-height: 0;
             overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .cart.expanded .cart-content {
+            max-height: 400px;
+        }
+
+        .cart-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #EEE;
+            font-size: 0.85em;
+        }
+
+        .cart-item-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #5A7A8C;
+        }
+
+        .cart-item-detail {
+            font-size: 0.8em;
+            color: #666;
+            margin: 3px 0;
+        }
+
+        .cart-actions {
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
 
         button {
-            background-color: var(--cor-primaria);
+            background-color: var(--cor-destaque);
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 20px;
             cursor: pointer;
+            font-size: 0.9em;
+            color: var(--cor-texto);
+            transition: all 0.2s;
+            min-width: 80px;
+            text-align: center;
         }
 
-        select {
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        select, input[type="number"] {
+            border: 1px solid var(--cor-borda);
+            padding: 6px 8px;
+            border-radius: 4px;
             margin: 5px 0;
-            padding: 5px;
+            width: 100%;
+            font-size: 0.9em;
+            background: white;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            text-align: center;
         }
 
         @media (max-width: 600px) {
             .cart {
-                bottom: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
+                bottom: 15px;
+                right: 15px;
+                left: 15px;
+                width: auto;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="welcome-message">
-        <h1>Bem-vindo à Brilho Alado! 🕯️</h1>
-        <p>Agradecemos sua visita! Nossas velas são 100% artesanais, feitas com amor e cuidado. Algumas podem ser personalizadas em cor e essência, outras mantêm sua identidade única. Cada peça é especial e pode apresentar variações naturais no acabamento - é parte do seu charme artesanal!</p>
+    <div class="welcome-modal" id="welcomeModal">
+        <h2>🕯 Bem-vindo à Brilho Alado</h2>
+        <p>
+            Agradecemos sua visita ao nosso cantinho aromático! Nossas velas são cuidadosamente 
+            elaboradas à mão, com ingredientes selecionados. Alguns modelos permitem personalização 
+            de cor e essência, enquanto outros mantêm suas características originais para preservar 
+            nossa identidade. Cada peça é única e pode apresentar variações naturais que fazem 
+            parte do charme do trabalho artesanal.
+        </p>
+        <button onclick="closeWelcome()">Entendi</button>
     </div>
 
     <div class="product-grid" id="products">
-        <!-- Produtos serão inseridos aqui via JavaScript -->
+        <!-- Produtos serão renderizados via JavaScript -->
     </div>
 
-    <div class="cart" id="cart">
-        <button onclick="toggleCart()">Carrinho (0)</button>
-        <div id="cart-content"></div>
-        <button onclick="clearCart()">Limpar Carrinho</button>
-        <button onclick="sendOrder()">Enviar Pedido</button>
+    <div class="cart collapsed" id="cart">
+        <div class="cart-header" onclick="toggleCart()">
+            <span>🛒 Carrinho</span>
+            <span id="cart-summary">0 itens</span>
+        </div>
+        <div class="cart-content" id="cart-content">
+            <!-- Itens do carrinho serão inseridos aqui -->
+        </div>
+        <div class="cart-actions">
+            <button onclick="clearCart()">Limpar</button>
+            <button onclick="sendOrder()">Finalizar</button>
+        </div>
     </div>
 
     <script>
@@ -151,52 +310,71 @@
         
         function renderProducts() {
             const grid = document.getElementById('products');
+            grid.innerHTML = '';
+            
             products.forEach(product => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 
-                let html = `<h3>${product.name}</h3>`;
+                let html = `<h3 class="product-title">${product.name}</h3>`;
                 
                 // Imagens
-                html += `<div class="carousel">`;
-                product.images.forEach(img => {
-                    html += `<img src="${img}" class="product-image" alt="${product.name}">`;
-                });
-                html += `</div>`;
+                if(product.images.length > 1) {
+                    html += `<div class="carousel">`;
+                    product.images.forEach(img => {
+                        html += `<img src="${img}" class="product-image" alt="${product.name}">`;
+                    });
+                    html += `</div>`;
+                } else {
+                    html += `<img src="${product.images[0]}" class="product-image" alt="${product.name}">`;
+                }
                 
-                // Detalhes específicos
-                if(product.weight) html += `<p>Peso: ${product.weight}</p>`;
+                // Peso
+                if(product.weight) {
+                    html += `<div class="product-detail">Peso: ${product.weight}</div>`;
+                }
                 if(product.weightOptions) {
-                    html += `<select id="weight-${product.id}">`;
+                    html += `<select id="weight-${product.id}" class="product-detail">`;
                     product.weightOptions.forEach(opt => {
                         html += `<option value="${opt.price}">${opt.weight} - R$ ${opt.price}</option>`;
                     });
                     html += `</select>`;
                 }
                 
-                // Opções de essência/cor
+                // Essência
                 if(product.essenceOptions) {
-                    html += `<select id="essence-${product.id}">`;
+                    html += `<select id="essence-${product.id}" class="product-detail">`;
                     product.essenceOptions.forEach(opt => {
                         html += `<option>${opt}</option>`;
                     });
                     html += `</select>`;
+                } else if(product.essence) {
+                    html += `<div class="product-detail">Essência: ${product.essence}</div>`;
                 }
                 
+                // Cor
                 if(product.colorOptions) {
-                    html += `<select id="color-${product.id}">`;
+                    html += `<select id="color-${product.id}" class="product-detail">`;
                     product.colorOptions.forEach(opt => {
                         html += `<option>${opt}</option>`;
                     });
                     html += `</select>`;
+                } else if(product.color) {
+                    html += `<div class="product-detail">Cor: ${product.color}</div>`;
                 }
                 
                 // Preço
-                if(product.price) html += `<p>Valor: R$ ${product.price}</p>`;
-                if(product.basePrice) html += `<p>Valor: R$ ${product.basePrice} cada (R$ ${product.discountedPrice} para 2+ unidades)</p>`;
+                if(product.price) {
+                    html += `<div class="price">Valor: R$ ${product.price}</div>`;
+                } else if(product.basePrice) {
+                    html += `<div class="price">Valor: R$ ${product.basePrice} (R$ ${product.discountedPrice} para 2+ unidades)</div>`;
+                }
                 
-                html += `<input type="number" id="qty-${product.id}" min="1" value="1" style="width: 60px;">
-                       <button onclick="addToCart(${product.id})">Adicionar</button>`;
+                // Quantidade e botão
+                html += `<div class="add-to-cart">
+                    <input type="number" id="qty-${product.id}" min="1" value="1">
+                    <button onclick="addToCart(${product.id})">Adicionar</button>
+                </div>`;
                 
                 card.innerHTML = html;
                 grid.appendChild(card);
@@ -214,11 +392,12 @@
                 price: calculatePrice(product, qty),
                 essence: product.essenceOptions ? document.getElementById(`essence-${productId}`).value : product.essence,
                 color: product.colorOptions ? document.getElementById(`color-${productId}`).value : 'Fixo',
-                weight: product.weightOptions ? document.getElementById(`weight-${productId}`).options[document.getElementById(`weight-${productId}`).selectedIndex].text : product.weight
+                weight: product.weightOptions ? document.getElementById(`weight-${productId}`).options[document.getElementById(`weight-${productId}`).selectedIndex].text.split(' - ')[0] : product.weight
             };
             
             cart.push(cartItem);
             updateCart();
+            toggleCart(true); // Expandir o carrinho ao adicionar item
         }
 
         function calculatePrice(product, qty) {
@@ -228,21 +407,48 @@
         }
 
         function updateCart() {
-            document.querySelector('#cart button').textContent = `Carrinho (${cart.length})`;
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            document.getElementById('cart-summary').textContent = `${totalItems} ${totalItems === 1 ? 'item' : 'itens'} • R$ ${totalValue}`;
+            
             const content = document.getElementById('cart-content');
-            content.innerHTML = cart.map(item => `
-                <div>
-                    <b>${item.name}</b><br>
-                    ${item.essence} | ${item.color}<br>
-                    ${item.weight} | Qtd: ${item.qty}<br>
-                    R$ ${item.price * item.qty}
-                </div>
-                <hr>
-            `).join('');
+            content.innerHTML = '';
+            
+            if(cart.length === 0) {
+                content.innerHTML = '<div style="padding: 15px; text-align: center; color: #666;">Seu carrinho está vazio</div>';
+                return;
+            }
+            
+            cart.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'cart-item';
+                itemDiv.innerHTML = `
+                    <div class="cart-item-title">${item.name}</div>
+                    <div class="cart-item-detail">${item.essence} | ${item.color}</div>
+                    <div class="cart-item-detail">${item.weight} | ${item.qty} un.</div>
+                    <div class="cart-item-detail">R$ ${item.price * item.qty}</div>
+                `;
+                content.appendChild(itemDiv);
+            });
         }
 
-        function toggleCart() {
-            document.getElementById('cart').classList.toggle('collapsed');
+        function toggleCart(forceExpand = false) {
+            const cartElement = document.getElementById('cart');
+            
+            if(forceExpand) {
+                cartElement.classList.remove('collapsed');
+                cartElement.classList.add('expanded');
+                return;
+            }
+            
+            if(cartElement.classList.contains('collapsed')) {
+                cartElement.classList.remove('collapsed');
+                cartElement.classList.add('expanded');
+            } else {
+                cartElement.classList.remove('expanded');
+                cartElement.classList.add('collapsed');
+            }
         }
 
         function clearCart() {
@@ -251,19 +457,43 @@
         }
 
         function sendOrder() {
-            const message = `Olá Brilho Alado! Gostaria de fazer o seguinte pedido:%0A%0A${cart.map(item => 
-                `*${item.name}*%0A` +
-                `Essência: ${item.essence}%0A` +
-                `Cor: ${item.color}%0A` +
-                `Peso: ${item.weight}%0A` +
-                `Quantidade: ${item.qty}%0A` +
-                `Total: R$ ${item.price * item.qty}%0A%0A`
-            ).join('')}%0ATotal Geral: R$ ${cart.reduce((sum, item) => sum + (item.price * item.qty), 0)}`;
+            if(cart.length === 0) {
+                alert('Seu carrinho está vazio');
+                return;
+            }
             
-            window.open(`https://wa.me/5547991880797?text=${message}`, '_blank');
+            const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            let message = `*Pedido Brilho Alado*%0A%0A`;
+            message += `Cliente: [Seu Nome]%0A`;
+            message += `Telefone: [Seu Telefone]%0A%0A`;
+            message += `*Itens do Pedido*%0A%0A`;
+            
+            cart.forEach(item => {
+                message += `*${item.name}*%0A`;
+                message += `Essência: ${item.essence}%0A`;
+                message += `Cor: ${item.color}%0A`;
+                message += `Peso: ${item.weight}%0A`;
+                message += `Quantidade: ${item.qty}%0A`;
+                message += `Valor: R$ ${item.price * item.qty}%0A%0A`;
+            });
+            
+            message += `*Total: R$ ${totalValue}*%0A%0A`;
+            message += `Endereço de entrega:%0A[Seu Endereço Completo]%0A%0A`;
+            message += `Observações:%0A[Alguma observação especial]`;
+            
+            window.open(`https://wa.me/5547991880797?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        renderProducts();
+        function closeWelcome() {
+            document.getElementById('welcomeModal').style.display = 'none';
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            updateCart();
+        });
     </script>
 </body>
 </html>
