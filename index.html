@@ -1,462 +1,269 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brilho Alado - Velas Aromáticas</title>
-    <script src="https://cdn.tailwindcss.com "></script>
     <style>
-        .image-container {
-            aspect-ratio: 9/16;
-            height: 200px;
+        :root {
+            --cor-primaria: #B0E0E6;
+            --cor-secundaria: #F5F5F5;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--cor-secundaria);
+        }
+
+        .welcome-message {
+            text-align: center;
+            background-color: var(--cor-primaria);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            max-width: 200px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+        }
+
+        .cart {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+
+        .cart.collapsed {
+            max-height: 50px;
             overflow: hidden;
         }
-        .image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+
+        button {
+            background-color: var(--cor-primaria);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        #cartSidebar {
-            transition: all 0.3s ease-in-out;
+
+        select {
+            margin: 5px 0;
+            padding: 5px;
         }
-        .collapsed-cart {
-            transform: translateX(100%);
-        }
-        .collapsed-cart .cart-toggle {
-            transform: translateX(-100%);
-        }
-        .cart-toggle {
-            transition: transform 0.3s ease-in-out;
-        }
-        #cartTotalBadge {
-            display: none;
-        }
-        .collapsed-cart #cartTotalBadge {
-            display: block;
-        }
-        .collapsed-cart #cartItems {
-            display: none;
-        }
-        .line-through {
-            text-decoration: line-through;
+
+        @media (max-width: 600px) {
+            .cart {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
     </style>
 </head>
-<body class="bg-blue-50 min-h-screen">
-
-    <!-- Modal de Boas-Vindas -->
-    <div id="welcomeModal" class="fixed inset-0 bg-blue-100 flex flex-col items-center justify-center p-4 z-50">
-        <div class="max-w-md text-center space-y-4 bg-white p-6 rounded-lg shadow-lg">
-            <h1 class="text-2xl font-semibold text-blue-800">Bem-vindo à Brilho Alado!</h1>
-            <p class="text-gray-700">
-                Nossas velas artesanais são feitas com carinho e podem ter pequenas variações únicas.
-                Alguns produtos permitem personalização de cor, essência e tamanho.
-            </p>
-            <button onclick="closeWelcome()"
-                class="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition">
-                Entendi
-            </button>
-        </div>
+<body>
+    <div class="welcome-message">
+        <h1>Bem-vindo à Brilho Alado! 🕯️</h1>
+        <p>Agradecemos sua visita! Nossas velas são 100% artesanais, feitas com amor e cuidado. Algumas podem ser personalizadas em cor e essência, outras mantêm sua identidade única. Cada peça é especial e pode apresentar variações naturais no acabamento - é parte do seu charme artesanal!</p>
     </div>
 
-    <!-- Botão Flutuante do Carrinho -->
-    <button id="cartToggleButton" onclick="toggleCart()" 
-        class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-40 cart-toggle">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-        <span id="cartTotalBadge" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
-    </button>
-
-    <!-- Conteúdo Principal -->
-    <div class="container mx-auto p-4 pt-20">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-blue-800">Catálogo de Velas Aromáticas</h1>
-            <p class="text-blue-600">Produtos 100% artesanais com essências exclusivas</p>
-        </header>
-
-        <div id="products" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <!-- Produtos serão inseridos aqui via JavaScript -->
-        </div>
+    <div class="product-grid" id="products">
+        <!-- Produtos serão inseridos aqui via JavaScript -->
     </div>
 
-    <!-- Modal de Detalhes do Produto -->
-    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full relative">
-            <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-            
-            <!-- Imagem Principal -->
-            <div class="image-container mb-4">
-                <img src="" alt="" class="w-full h-full object-cover">
-            </div>
-            
-            <h2 id="modalTitle" class="text-xl font-semibold mb-2"></h2>
-            <p id="modalPrice" class="text-lg font-bold text-blue-600 mb-4"></p>
-            <div id="modalContent"></div>
-            <button onclick="addToCart()" 
-                class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition mt-4">
-                Adicionar ao Carrinho
-            </button>
-        </div>
+    <div class="cart" id="cart">
+        <button onclick="toggleCart()">Carrinho (0)</button>
+        <div id="cart-content"></div>
+        <button onclick="clearCart()">Limpar Carrinho</button>
+        <button onclick="sendOrder()">Enviar Pedido</button>
     </div>
 
-    <!-- Carrinho Lateral -->
-    <div id="cartSidebar" class="fixed bottom-0 right-0 bg-white w-96 h-screen border-l border-gray-200 p-4 z-40 collapsed-cart">
-        <h3 class="font-semibold text-lg text-blue-800 mb-4">Carrinho</h3>
-        <div id="cartItems" class="space-y-2 overflow-y-auto h-40"></div>
-        <div class="mt-4">
-            <p id="totalPrice" class="font-bold text-blue-800">Total: R$0</p>
-            <a id="whatsappLink" href="#" target="_blank" 
-                class="w-full bg-green-500 text-white py-2 rounded-md block text-center hover:bg-green-600 transition mt-4">
-                Enviar Pedido via WhatsApp
-            </a>
-            <button onclick="clearCart()" 
-                class="w-full bg-red-500 text-white py-2 rounded-md block text-center hover:bg-red-600 transition mt-2">
-                Limpar Carrinho
-            </button>
-        </div>
-    </div>
+    <script>
+        const products = [
+            {
+                id: 1,
+                name: "Vela Cappuccino",
+                images: ["Vela_Cappuccino.jpg"],
+                weight: "140g",
+                price: 65,
+                essence: "Cappuccino",
+                color: "Fixo"
+            },
+            {
+                id: 2,
+                name: "Vela Melancia",
+                images: ["Vela_Melancia.jpg"],
+                weightOptions: [
+                    { weight: "100g", price: 45 },
+                    { weight: "180g", price: 50 }
+                ],
+                essence: "Melancia"
+            },
+            {
+                id: 3,
+                name: "Vela Love",
+                images: ["Vela_Love_1.jpg", "Vela_Love_2.jpg", "Vela_Love_3.jpg"],
+                weight: "110g",
+                price: 40,
+                essenceOptions: ["Algodão","Baunilha","Bergamota","Café com Chocolate","Canela","Cappuccino","Capim Limão","Cassis e Hibisco","Cereja e Avelã","Chá Verde","Flor de Cerejeira","Folhas de Figo","Lavanda Francesa","Melancia","Morango","Mousse de Maracujá","Oceano","Pistache","Rosas","Zimbro e Madeira Guaiac"],
+                colorOptions: ["Azul", "Rosa", "Amarelo", "Branco", "Laranja"]
+            },
+            {
+                id: 4,
+                name: "Vela Recordação",
+                images: ["Vela_Recordacao_1.jpg", "Vela_Recordacao_2.jpg", "Vela_Recordacao_3.jpg"],
+                weight: "80g",
+                basePrice: 30,
+                discountedPrice: 25,
+                essenceOptions: ["Algodão","Baunilha","Bergamota","Café com Chocolate","Canela","Cappuccino","Capim Limão","Cassis e Hibisco","Cereja e Avelã","Chá Verde","Flor de Cerejeira","Folhas de Figo","Lavanda Francesa","Melancia","Morango","Mousse de Maracujá","Oceano","Pistache","Rosas","Zimbro e Madeira Guaiac"]
+            }
+        ];
 
-<script>
-    // Dados dos produtos
-    const products = [
-        {
-            id: 1,
-            name: 'Vela Cappuccino',
-            images: ['Vela_Cappuccino.jpg'],
-            weight: '140g',
-            price: 65,
-            scent: 'Cappuccino',
-            color: 'Fixo'
-        },
-        {
-            id: 2,
-            name: 'Vela Melancia',
-            images: ['Vela_Melancia.jpg'],
-            weightOptions: [
-                { value: '100g', price: 45 },
-                { value: '180g', price: 50 }
-            ],
-            scent: 'Melancia',
-            color: 'Fixo'
-        },
-        {
-            id: 3,
-            name: 'Vela Love',
-            images: ['Vela_Love.jpg', 'Vela_Love_2.jpg', 'Vela_Love_3.jpg'],
-            weight: '110g',
-            price: 40,
-            scentOptions: [
-                'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
-                'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
-                'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
-                'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
-                'Rosas', 'Zimbro e Madeira Guaiac'
-            ],
-            colorOptions: ['Azul', 'Rosa', 'Amarelo', 'Branco', 'Laranja']
-        },
-        {
-            id: 4,
-            name: 'Vela Recordação',
-            images: ['Vela_Recordacao.jpg', 'Vela_Recordacao_2.jpg'],
-            weight: '80g',
-            basePrice: 30, // Preço padrão para 1 unidade
-            discountPrice: 25, // Preço promocional para 2 ou mais unidades
-            note: 'Promoção: R$25 cada acima de 2 unidades',
-            scentOptions: [
-                'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
-                'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
-                'Chá Verde', 'Flor de Cerejeira', 'Folhas de Figo', 'Lavanda Francesa',
-                'Melancia', 'Morango', 'Mousse de Maracujá', 'Oceano', 'Pistache',
-                'Rosas', 'Zimbro e Madeira Guaiac'
-            ]
-        }
-    ];
-
-    // Variáveis globais
-    let cart = [];
-    let currentProduct = null;
-
-    // Inicialização
-    function init() {
-        renderProducts();
-        updateCart(); // Inicia com o carrinho minimizado
-    }
-
-    // Renderização dos produtos
-    function renderProducts() {
-        const container = document.getElementById('products');
-        container.innerHTML = products.map(product => `
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-                <div class="relative">
-                    <div class="image-container">
-                        <img src="/imagens/${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover">
-                    </div>
-                </div>
-                <div class="p-4 space-y-2">
-                    <h3 class="font-semibold text-blue-800">${product.name}</h3>
-                    <p class="text-sm text-gray-600">
-                        ${product.weightOptions ? 
-                            'Peso: ' + product.weightOptions.map(opt => `${opt.value} (R$${opt.price})`).join(' | ')
-                        : `Peso: ${product.weight}`}
-                    </p>
-                    <p>Essência: ${product.scent || 'Selecione'}</p>
-                    <p>Cor: ${product.color || 'Selecione'}</p>
-                    <p class="font-bold text-blue-600">
-                        ${product.id === 4 ? `
-                            <del class="text-gray-500 line-through">R$${product.basePrice}</del> 
-                            <span class="text-red-500 ml-2">R$${product.discountPrice}</span>
-                            <br><span class="text-sm text-gray-500">${product.note}</span>
-                        ` : `Preço: R$${getProductPrice(product)}`}
-                    </p>
-                    <button onclick="openModal(${product.id})"
-                        class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition">
-                        Ver detalhes
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // Calcula preço do produto
-    function getProductPrice(product) {
-        if (product.weightOptions) {
-            return product.weightOptions[0].price; // Exibe primeiro preço como padrão
-        }
-        return product.basePrice || product.price;
-    }
-
-    // Controle do modal de boas-vindas
-    function closeWelcome() {
-        document.getElementById('welcomeModal').style.display = 'none';
-    }
-
-    // Abre o modal de produto
-    function openModal(productId) {
-        currentProduct = products.find(p => p.id === productId);
-        const modal = document.getElementById('productModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalPrice = document.getElementById('modalPrice');
-        const mainImage = modal.querySelector('.image-container img');
-        const modalContent = document.getElementById('modalContent');
-
-        modalTitle.textContent = currentProduct.name;
-        modalPrice.innerHTML = `
-            ${currentProduct.id === 4 ? `
-                <del class="text-gray-500 line-through">R$${currentProduct.basePrice}</del> 
-                <span class="text-red-500 ml-2">R$${currentProduct.discountPrice}</span>
-                <br><span class="text-sm text-gray-500">${currentProduct.note}</span>
-            ` : `R$${getProductPrice(currentProduct)}`}
-        `;
-        mainImage.src = `/imagens/${currentProduct.images[0]}`;
-
-        // Renderiza opções do produto
-        modalContent.innerHTML = `
-            ${currentProduct.weightOptions ? `
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Peso:</label>
-                    <select id="weightSelect" class="w-full border-gray-300 rounded-md shadow-sm">
-                        ${currentProduct.weightOptions.map(opt => `
-                            <option value="${opt.value}">${opt.value} - R$${opt.price}</option>
-                        `).join('')}
-                    </select>
-                </div>
-            ` : ''}
-            
-            ${currentProduct.scentOptions ? `
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Essência:</label>
-                    <select id="scentSelect" class="w-full border-gray-300 rounded-md shadow-sm">
-                        ${currentProduct.scentOptions.map(opt => `
-                            <option value="${opt}">${opt}</option>
-                        `).join('')}
-                    </select>
-                </div>
-            ` : ''}
-            
-            ${currentProduct.colorOptions ? `
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Cor:</label>
-                    <select id="colorSelect" class="w-full border-gray-300 rounded-md shadow-sm">
-                        ${currentProduct.colorOptions.map(opt => `
-                            <option value="${opt}">${opt}</option>
-                        `).join('')}
-                    </select>
-                </div>
-            ` : ''}
-            
-            <div class="flex items-center space-x-2 mb-4">
-                <label class="block text-sm font-medium text-gray-700">Quantidade:</label>
-                <input type="number" id="quantityInput" min="1" value="1" 
-                    class="mt-1 block w-20 border-gray-300 rounded-md shadow-sm">
-            </div>
-        `;
-
-        modal.style.display = 'flex';
-    }
-
-    // Fecha o modal
-    function closeModal() {
-        document.getElementById('productModal').style.display = 'none';
-    }
-
-    // Adiciona ao carrinho
-    function addToCart() {
-        const quantity = parseInt(document.getElementById('quantityInput')?.value || 1);
-        const productCopy = {...currentProduct};
+        let cart = [];
         
-        // Captura opções selecionadas
-        if (currentProduct.weightOptions) {
-            productCopy.selectedWeight = document.getElementById('weightSelect').value;
-            productCopy.price = currentProduct.weightOptions
-                .find(opt => opt.value === productCopy.selectedWeight).price;
-        }
-        
-        if (currentProduct.scentOptions) {
-            productCopy.selectedScent = document.getElementById('scentSelect').value;
-        }
-        
-        if (currentProduct.colorOptions) {
-            productCopy.selectedColor = document.getElementById('colorSelect').value;
-        }
-
-        // Verifica se já existe no carrinho
-        const existingIndex = cart.findIndex(item => 
-            item.id === productCopy.id &&
-            JSON.stringify(item.options) === JSON.stringify({
-                weight: productCopy.selectedWeight,
-                scent: productCopy.selectedScent,
-                color: productCopy.selectedColor
-            })
-        );
-
-        if (existingIndex >= 0) {
-            cart[existingIndex].quantity += quantity;
-        } else {
-            cart.push({
-                ...productCopy,
-                quantity: quantity,
-                options: {
-                    weight: productCopy.selectedWeight,
-                    scent: productCopy.selectedScent,
-                    color: productCopy.selectedColor
+        function renderProducts() {
+            const grid = document.getElementById('products');
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                let html = `<h3>${product.name}</h3>`;
+                
+                // Imagens
+                html += `<div class="carousel">`;
+                product.images.forEach(img => {
+                    html += `<img src="${img}" class="product-image" alt="${product.name}">`;
+                });
+                html += `</div>`;
+                
+                // Detalhes específicos
+                if(product.weight) html += `<p>Peso: ${product.weight}</p>`;
+                if(product.weightOptions) {
+                    html += `<select id="weight-${product.id}">`;
+                    product.weightOptions.forEach(opt => {
+                        html += `<option value="${opt.price}">${opt.weight} - R$ ${opt.price}</option>`;
+                    });
+                    html += `</select>`;
                 }
+                
+                // Opções de essência/cor
+                if(product.essenceOptions) {
+                    html += `<select id="essence-${product.id}">`;
+                    product.essenceOptions.forEach(opt => {
+                        html += `<option>${opt}</option>`;
+                    });
+                    html += `</select>`;
+                }
+                
+                if(product.colorOptions) {
+                    html += `<select id="color-${product.id}">`;
+                    product.colorOptions.forEach(opt => {
+                        html += `<option>${opt}</option>`;
+                    });
+                    html += `</select>`;
+                }
+                
+                // Preço
+                if(product.price) html += `<p>Valor: R$ ${product.price}</p>`;
+                if(product.basePrice) html += `<p>Valor: R$ ${product.basePrice} cada (R$ ${product.discountedPrice} para 2+ unidades)</p>`;
+                
+                html += `<input type="number" id="qty-${product.id}" min="1" value="1" style="width: 60px;">
+                       <button onclick="addToCart(${product.id})">Adicionar</button>`;
+                
+                card.innerHTML = html;
+                grid.appendChild(card);
             });
         }
 
-        updateCart();
-        closeModal();
-    }
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const qty = parseInt(document.getElementById(`qty-${productId}`).value);
+            
+            const cartItem = {
+                id: productId,
+                name: product.name,
+                qty: qty,
+                price: calculatePrice(product, qty),
+                essence: product.essenceOptions ? document.getElementById(`essence-${productId}`).value : product.essence,
+                color: product.colorOptions ? document.getElementById(`color-${productId}`).value : 'Fixo',
+                weight: product.weightOptions ? document.getElementById(`weight-${productId}`).options[document.getElementById(`weight-${productId}`).selectedIndex].text : product.weight
+            };
+            
+            cart.push(cartItem);
+            updateCart();
+        }
 
-    // Atualiza o carrinho
-    function updateCart() {
-        const cartItems = document.getElementById('cartItems');
-        const totalPrice = document.getElementById('totalPrice');
-        const whatsappLink = document.getElementById('whatsappLink');
-        const cartTotalBadge = document.getElementById('cartTotalBadge');
+        function calculatePrice(product, qty) {
+            if(product.id === 4 && qty >= 2) return product.discountedPrice;
+            if(product.weightOptions) return parseInt(document.getElementById(`weight-${product.id}`).value);
+            return product.price || product.basePrice;
+        }
 
-        // Limpa carrinho
-        cartItems.innerHTML = '';
-
-        // Calcula total
-        let total = 0;
-        const recordacaoCount = cart.filter(item => item.id === 4).reduce((sum, item) => sum + item.quantity, 0);
-
-        // Renderiza itens
-        cart.forEach(item => {
-            let pricePerUnit = item.price;
-            if (item.id === 4) {
-                pricePerUnit = recordacaoCount >= 2 ? item.discountPrice : item.basePrice;
-            }
-            const itemTotal = pricePerUnit * item.quantity;
-
-            total += itemTotal;
-
-            // Nova lógica para exibição do carrinho
-            cartItems.innerHTML += `
-                <div class="border-b pb-4 mb-4 last:border-b-0 last:mb-0">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="font-medium">${item.name}</p>
-                            <p class="text-sm text-gray-600">Qtd: ${item.quantity}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-semibold">
-                                R$${itemTotal}
-                            </p>
-                            <button onclick="removeItem(${cart.indexOf(item)})" 
-                                class="text-xs text-red-500 hover:text-red-700 mt-1">
-                                Remover
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Detalhes colapsáveis -->
-                    <div class="mt-2 transition-all duration-300 ease-in-out max-h-0 overflow-hidden">
-                        <div class="pl-4 text-sm text-gray-600">
-                            ${item.options.weight ? `Peso: ${item.options.weight}` : ''}
-                            ${item.options.scent ? ` | Essência: ${item.options.scent}` : ''}
-                            ${item.options.color ? ` | Cor: ${item.options.color}` : ''}
-                        </div>
-                    </div>
-                    
-                    <!-- Botão para expandir/detalhar -->
-                    <button onclick="toggleDetails(this)" 
-                        class="text-xs text-blue-500 hover:text-blue-700 mt-1">
-                        Ver detalhes
-                    </button>
+        function updateCart() {
+            document.querySelector('#cart button').textContent = `Carrinho (${cart.length})`;
+            const content = document.getElementById('cart-content');
+            content.innerHTML = cart.map(item => `
+                <div>
+                    <b>${item.name}</b><br>
+                    ${item.essence} | ${item.color}<br>
+                    ${item.weight} | Qtd: ${item.qty}<br>
+                    R$ ${item.price * item.qty}
                 </div>
-            `;
-        });
+                <hr>
+            `).join('');
+        }
 
-        // Atualiza total
-        totalPrice.textContent = `Total: R$${total}`;
-        cartTotalBadge.textContent = total.toFixed(2);
+        function toggleCart() {
+            document.getElementById('cart').classList.toggle('collapsed');
+        }
 
-        // Atualiza link do WhatsApp
-        const message = encodeURIComponent(`
-            Olá! Gostaria de fazer o seguinte pedido:\n\n
-            ${cart.map(item => {
-                let price = item.price;
-                if (item.id === 4) {
-                    price = recordacaoCount >= 2 ? item.discountPrice : item.basePrice;
-                }
-                return `${item.quantity}x ${item.name} - R$${price} cada`;
-            }).join('\n')}\n\n
-            Total: R$${total}
-        `).replace(/%20/g, '+');
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
 
-        whatsappLink.href = `https://wa.me/5547991880797?text= ${message}`;
-    }
+        function sendOrder() {
+            const message = `Olá Brilho Alado! Gostaria de fazer o seguinte pedido:%0A%0A${cart.map(item => 
+                `*${item.name}*%0A` +
+                `Essência: ${item.essence}%0A` +
+                `Cor: ${item.color}%0A` +
+                `Peso: ${item.weight}%0A` +
+                `Quantidade: ${item.qty}%0A` +
+                `Total: R$ ${item.price * item.qty}%0A%0A`
+            ).join('')}%0ATotal Geral: R$ ${cart.reduce((sum, item) => sum + (item.price * item.qty), 0)}`;
+            
+            window.open(`https://wa.me/5547991880797?text=${message}`, '_blank');
+        }
 
-    // Função para alternar detalhes
-    function toggleDetails(element) {
-        const details = element.parentNode.querySelector('.transition-all');
-        details.classList.toggle('max-h-0');
-        details.classList.toggle('max-h-20');
-        element.textContent = element.textContent === 'Ver detalhes' ? 'Mostrar menos' : 'Ver detalhes';
-    }
-
-    // Remove item do carrinho
-    function removeItem(index) {
-        cart.splice(index, 1);
-        updateCart();
-    }
-
-    // Limpa carrinho
-    function clearCart() {
-        cart = [];
-        updateCart();
-    }
-
-    // Alterna visibilidade do carrinho
-    function toggleCart() {
-        const cartSidebar = document.getElementById('cartSidebar');
-        cartSidebar.classList.toggle('collapsed-cart');
-    }
-
-    // Inicializa tudo
-    init();
-</script>
+        renderProducts();
+    </script>
 </body>
 </html>
