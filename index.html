@@ -37,6 +37,9 @@
         .collapsed-cart #cartItems {
             display: none;
         }
+        .line-through {
+            text-decoration: line-through;
+        }
     </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
@@ -157,9 +160,9 @@
             name: 'Vela Recordação',
             images: ['Vela_Recordacao.jpg', 'Vela_Recordacao_2.jpg'],
             weight: '80g',
-            basePrice: 25, // Valor padrão ajustado para R$25
-            discountPrice: 25,
-            note: 'Valor promocional para 2 ou mais unidades',
+            basePrice: 30, // Preço padrão para 1 unidade
+            discountPrice: 25, // Preço promocional para 2 ou mais unidades
+            note: 'Promoção: R$25 cada acima de 2 unidades',
             scentOptions: [
                 'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
                 'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
@@ -200,8 +203,11 @@
                     <p>Essência: ${product.scent || 'Selecione'}</p>
                     <p>Cor: ${product.color || 'Selecione'}</p>
                     <p class="font-bold text-blue-600">
-                        Preço: R$${getProductPrice(product)}
-                        ${product.note ? `<br><span class="text-xs text-gray-500">${product.note}</span>` : ''}
+                        ${product.id === 4 ? `
+                            <del class="text-gray-500 line-through">R$${product.basePrice}</del> 
+                            <span class="text-red-500 ml-2">R$${product.discountPrice}</span>
+                            <br><span class="text-sm text-gray-500">${product.note}</span>
+                        ` : `Preço: R$${getProductPrice(product)}`}
                     </p>
                     <button onclick="openModal(${product.id})"
                         class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition">
@@ -235,8 +241,13 @@
         const modalContent = document.getElementById('modalContent');
 
         modalTitle.textContent = currentProduct.name;
-        modalPrice.innerHTML = `R$${getProductPrice(currentProduct)} 
-            ${currentProduct.note ? `<br><span class="text-sm text-gray-500">${currentProduct.note}</span>` : ''}`;
+        modalPrice.innerHTML = `
+            ${currentProduct.id === 4 ? `
+                <del class="text-gray-500 line-through">R$${currentProduct.basePrice}</del> 
+                <span class="text-red-500 ml-2">R$${currentProduct.discountPrice}</span>
+                <br><span class="text-sm text-gray-500">${currentProduct.note}</span>
+            ` : `R$${getProductPrice(currentProduct)}`}
+        `;
         mainImage.src = `/imagens/${currentProduct.images[0]}`;
 
         // Renderiza opções do produto
