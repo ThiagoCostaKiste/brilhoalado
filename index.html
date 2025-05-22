@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brilho Alado - Velas Aromáticas</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com "></script>
     <style>
         .image-container {
             aspect-ratio: 9/16;
@@ -17,30 +17,30 @@
             object-fit: cover;
         }
         #cartSidebar {
-            transition: all 0.3s ease-out;
-            max-height: 100vh;
+            transition: all 0.3s ease-in-out;
         }
-        #cartSidebar.minimized {
-            max-height: 60px;
-            overflow: hidden;
+        .collapsed-cart {
+            transform: translateX(100%);
         }
-        @media (min-width: 768px) {
-            #cartSidebar.minimized {
-                max-height: 60px;
-            }
+        .collapsed-cart .cart-toggle {
+            transform: translateX(-100%);
         }
-        .collapsed {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
+        .cart-toggle {
+            transition: transform 0.3s ease-in-out;
         }
-        .expanded {
-            max-height: 200px;
-            transition: max-height 0.3s ease-out;
+        #cartTotalBadge {
+            display: none;
+        }
+        .collapsed-cart #cartTotalBadge {
+            display: block;
+        }
+        .collapsed-cart #cartItems {
+            display: none;
         }
     </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
+
     <!-- Modal de Boas-Vindas -->
     <div id="welcomeModal" class="fixed inset-0 bg-blue-100 flex flex-col items-center justify-center p-4 z-50">
         <div class="max-w-md text-center space-y-4 bg-white p-6 rounded-lg shadow-lg">
@@ -55,6 +55,15 @@
             </button>
         </div>
     </div>
+
+    <!-- Botão Flutuante do Carrinho -->
+    <button id="cartToggleButton" onclick="toggleCart()" 
+        class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg z-40 cart-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <span id="cartTotalBadge" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+    </button>
 
     <!-- Conteúdo Principal -->
     <div class="container mx-auto p-4 pt-20">
@@ -88,32 +97,25 @@
         </div>
     </div>
 
-    <!-- Carrinho Lateral Modificado -->
-    <div id="cartSidebar" class="fixed bottom-0 right-0 bg-white w-full md:w-96 border-t md:border-l border-gray-200 p-4">
-        <div class="flex justify-between items-center mb-2">
-            <h3 class="font-semibold text-lg text-blue-800">Carrinho</h3>
-            <button onclick="toggleCart()" class="text-blue-500 hover:text-blue-700 text-sm">
-                Minimizar
+    <!-- Carrinho Lateral -->
+    <div id="cartSidebar" class="fixed bottom-0 right-0 bg-white w-96 h-screen border-l border-gray-200 p-4 z-40 collapsed-cart">
+        <h3 class="font-semibold text-lg text-blue-800 mb-4">Carrinho</h3>
+        <div id="cartItems" class="space-y-2 overflow-y-auto h-40"></div>
+        <div class="mt-4">
+            <p id="totalPrice" class="font-bold text-blue-800">Total: R$0</p>
+            <a id="whatsappLink" href="#" target="_blank" 
+                class="w-full bg-green-500 text-white py-2 rounded-md block text-center hover:bg-green-600 transition mt-4">
+                Enviar Pedido via WhatsApp
+            </a>
+            <button onclick="clearCart()" 
+                class="w-full bg-red-500 text-white py-2 rounded-md block text-center hover:bg-red-600 transition mt-2">
+                Limpar Carrinho
             </button>
-        </div>
-        <div id="cartContent">
-            <div id="cartItems" class="space-y-2 overflow-y-auto h-40"></div>
-            <div class="mt-4">
-                <p id="totalPrice" class="font-bold text-blue-800">Total: R$0</p>
-                <a id="whatsappLink" href="#" target="_blank" 
-                    class="w-full bg-green-500 text-white py-2 rounded-md block text-center hover:bg-green-600 transition mt-4">
-                    Enviar Pedido via WhatsApp
-                </a>
-                <button onclick="clearCart()" 
-                    class="w-full bg-red-500 text-white py-2 rounded-md block text-center hover:bg-red-600 transition mt-2">
-                    Limpar Carrinho
-                </button>
-            </div>
         </div>
     </div>
 
 <script>
-    // Dados dos produtos atualizados
+    // Dados dos produtos
     const products = [
         {
             id: 1,
@@ -155,8 +157,9 @@
             name: 'Vela Recordação',
             images: ['Vela_Recordacao.jpg', 'Vela_Recordacao_2.jpg'],
             weight: '80g',
-            basePrice: 30,
+            basePrice: 25, // Valor padrão ajustado para R$25
             discountPrice: 25,
+            note: 'Valor promocional para 2 ou mais unidades',
             scentOptions: [
                 'Algodão', 'Baunilha', 'Bergamota', 'Café com Chocolate', 'Canela',
                 'Cappuccino', 'Capim Limão', 'Cassis e Hibisco', 'Cereja e Avelã',
@@ -171,17 +174,10 @@
     let cart = [];
     let currentProduct = null;
 
-    // Função para alternar o carrinho
-    function toggleCart() {
-        const cart = document.getElementById('cartSidebar');
-        const button = cart.querySelector('button');
-        cart.classList.toggle('minimized');
-        button.textContent = cart.classList.contains('minimized') ? 'Maximizar' : 'Minimizar';
-    }
-
     // Inicialização
     function init() {
         renderProducts();
+        updateCart(); // Inicia com o carrinho minimizado
     }
 
     // Renderização dos produtos
@@ -203,7 +199,10 @@
                     </p>
                     <p>Essência: ${product.scent || 'Selecione'}</p>
                     <p>Cor: ${product.color || 'Selecione'}</p>
-                    <p class="font-bold text-blue-600">Preço: R$${getProductPrice(product)}</p>
+                    <p class="font-bold text-blue-600">
+                        Preço: R$${getProductPrice(product)}
+                        ${product.note ? `<br><span class="text-xs text-gray-500">${product.note}</span>` : ''}
+                    </p>
                     <button onclick="openModal(${product.id})"
                         class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-600 transition">
                         Ver detalhes
@@ -216,7 +215,7 @@
     // Calcula preço do produto
     function getProductPrice(product) {
         if (product.weightOptions) {
-            return product.weightOptions[0].price;
+            return product.weightOptions[0].price; // Exibe primeiro preço como padrão
         }
         return product.basePrice || product.price;
     }
@@ -236,7 +235,8 @@
         const modalContent = document.getElementById('modalContent');
 
         modalTitle.textContent = currentProduct.name;
-        modalPrice.textContent = `R$${getProductPrice(currentProduct)}`;
+        modalPrice.innerHTML = `R$${getProductPrice(currentProduct)} 
+            ${currentProduct.note ? `<br><span class="text-sm text-gray-500">${currentProduct.note}</span>` : ''}`;
         mainImage.src = `/imagens/${currentProduct.images[0]}`;
 
         // Renderiza opções do produto
@@ -274,12 +274,6 @@
                 </div>
             ` : ''}
             
-            ${currentProduct.id === 4 ? `
-                <p class="text-sm text-gray-600 mt-2">
-                    *2 ou mais unidades: R$${currentProduct.discountPrice} cada
-                </p>
-            ` : ''}
-
             <div class="flex items-center space-x-2 mb-4">
                 <label class="block text-sm font-medium text-gray-700">Quantidade:</label>
                 <input type="number" id="quantityInput" min="1" value="1" 
@@ -348,6 +342,7 @@
         const cartItems = document.getElementById('cartItems');
         const totalPrice = document.getElementById('totalPrice');
         const whatsappLink = document.getElementById('whatsappLink');
+        const cartTotalBadge = document.getElementById('cartTotalBadge');
 
         // Limpa carrinho
         cartItems.innerHTML = '';
@@ -366,6 +361,7 @@
 
             total += itemTotal;
 
+            // Nova lógica para exibição do carrinho
             cartItems.innerHTML += `
                 <div class="border-b pb-4 mb-4 last:border-b-0 last:mb-0">
                     <div class="flex justify-between items-center">
@@ -404,6 +400,7 @@
 
         // Atualiza total
         totalPrice.textContent = `Total: R$${total}`;
+        cartTotalBadge.textContent = total.toFixed(2);
 
         // Atualiza link do WhatsApp
         const message = encodeURIComponent(`
@@ -439,6 +436,12 @@
     function clearCart() {
         cart = [];
         updateCart();
+    }
+
+    // Alterna visibilidade do carrinho
+    function toggleCart() {
+        const cartSidebar = document.getElementById('cartSidebar');
+        cartSidebar.classList.toggle('collapsed-cart');
     }
 
     // Inicializa tudo
