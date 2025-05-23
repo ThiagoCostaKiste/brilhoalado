@@ -13,6 +13,10 @@
             --cor-titulo: #5A7A8C;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
@@ -52,7 +56,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
-            margin-bottom: 80px;
+            margin-bottom: 100px;
         }
 
         .product-card {
@@ -69,19 +73,46 @@
             transform: translateY(-5px);
         }
 
-        .product-image-container {
+        .carousel-container {
+            position: relative;
             height: 220px;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            cursor: pointer;
             background: #f9f9f9;
         }
 
-        .product-image {
-            max-height: 100%;
-            max-width: 100%;
+        .carousel {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+
+        .carousel img {
+            min-width: 100%;
+            height: 100%;
             object-fit: contain;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .carousel-dot.active {
+            background: var(--cor-destaque);
         }
 
         .product-info {
@@ -109,11 +140,37 @@
             color: #777;
         }
 
+        .product-price-container {
+            margin: 15px 0;
+        }
+
         .product-price {
             font-weight: bold;
             color: #4A7A8C;
-            margin: 15px 0;
             font-size: 1.1em;
+        }
+
+        .product-price-discount {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .discounted-price {
+            color: #4A7A8C;
+            font-weight: bold;
+        }
+
+        .discount-note {
+            font-size: 0.8em;
+            color: #666;
         }
 
         .add-to-cart {
@@ -153,6 +210,7 @@
             margin-left: 10px;
             flex: 1;
             max-width: 200px;
+            font-size: 0.9em;
         }
 
         .cart {
@@ -195,6 +253,7 @@
         .cart-item {
             padding: 15px;
             border-bottom: 1px solid var(--cor-borda);
+            position: relative;
         }
 
         .cart-item-title {
@@ -215,26 +274,58 @@
             color: #777;
         }
 
+        .cart-item-remove {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .cart-empty {
+            padding: 20px;
+            text-align: center;
+            color: #888;
+        }
+
         .cart-actions {
             padding: 15px;
             display: flex;
-            gap: 10px;
             justify-content: flex-end;
         }
 
         .cart-actions button {
-            padding: 8px 15px;
+            padding: 10px 20px;
             border-radius: 4px;
             border: none;
             cursor: pointer;
-        }
-
-        .clear-btn {
-            background: #F5F5F5;
-        }
-
-        .checkout-btn {
             background-color: var(--cor-destaque);
+            transition: background-color 0.2s;
+        }
+
+        .cart-actions button:hover {
+            background-color: #9BD1D9;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
         }
 
         @media (max-width: 768px) {
@@ -269,11 +360,10 @@
             <span id="cart-summary">0 itens - R$ 0</span>
         </div>
         <div class="cart-content" id="cart-content">
-            <!-- Itens do carrinho serão inseridos aqui -->
+            <div class="cart-empty">Seu carrinho está vazio</div>
         </div>
         <div class="cart-actions">
-            <button class="clear-btn" onclick="clearCart()">Limpar</button>
-            <button class="checkout-btn" onclick="sendOrder()">Finalizar</button>
+            <button onclick="sendOrder()">Enviar pedido no WhatsApp</button>
         </div>
     </div>
 
@@ -319,6 +409,7 @@
         ];
 
         let cart = [];
+        let carousels = {};
         
         function renderProducts() {
             const grid = document.getElementById('products');
@@ -328,74 +419,123 @@
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 
-                let html = `
-                    <div class="product-image-container">
-                        <img src="${product.images[0]}" class="product-image" alt="${product.name}">
+                // Carrossel de imagens
+                const carouselContainer = document.createElement('div');
+                carouselContainer.className = 'carousel-container';
+                
+                const carousel = document.createElement('div');
+                carousel.className = 'carousel';
+                carousel.id = `carousel-${product.id}`;
+                
+                product.images.forEach((img, index) => {
+                    carousel.innerHTML += `<img src="${img}" alt="${product.name}" data-index="${index}">`;
+                });
+                
+                const dots = document.createElement('div');
+                dots.className = 'carousel-nav';
+                
+                product.images.forEach((_, index) => {
+                    dots.innerHTML += `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}" onclick="setCarouselPosition(${product.id}, ${index}, event)"></div>`;
+                });
+                
+                carouselContainer.appendChild(carousel);
+                carouselContainer.appendChild(dots);
+                
+                // Armazenar referência do carrossel
+                carousels[product.id] = {
+                    element: carousel,
+                    currentIndex: 0,
+                    totalItems: product.images.length
+                };
+                
+                // Info do produto
+                const productInfo = document.createElement('div');
+                productInfo.className = 'product-info';
+                
+                productInfo.innerHTML = `
+                    <h3 class="product-title">${product.name}</h3>
+                    <div class="product-detail">
+                        <span class="product-detail-label">Peso:</span>
+                        <span>${product.weight}</span>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-title">${product.name}</h3>
-                        <div class="product-detail">
-                            <span class="product-detail-label">Peso:</span>
-                            <span>${product.weight}</span>
-                        </div>
+                    <div class="product-detail">
+                        <span class="product-detail-label">Essência:</span>
+                        ${product.essenceOptions ? 
+                            `<select id="essence-${product.id}">
+                                ${product.essenceOptions.map(opt => `<option>${opt}</option>`).join('')}
+                            </select>` : 
+                            `<span>${product.essence}</span>`
+                        }
+                    </div>
+                    <div class="product-detail">
+                        <span class="product-detail-label">Cor:</span>
+                        ${product.colorOptions ? 
+                            `<select id="color-${product.id}">
+                                ${product.colorOptions.map(opt => `<option>${opt}</option>`).join('')}
+                            </select>` : 
+                            `<span>${product.color}</span>`
+                        }
+                    </div>
                 `;
                 
-                // Essência
-                if(product.essenceOptions) {
-                    html += `
-                        <div class="product-detail">
-                            <span class="product-detail-label">Essência:</span>
-                            <select id="essence-${product.id}">
-                                ${product.essenceOptions.map(opt => `<option>${opt}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="product-detail">
-                            <span class="product-detail-label">Essência:</span>
-                            <span>${product.essence}</span>
-                        </div>
-                    `;
-                }
-                
-                // Cor
-                if(product.colorOptions) {
-                    html += `
-                        <div class="product-detail">
-                            <span class="product-detail-label">Cor:</span>
-                            <select id="color-${product.id}">
-                                ${product.colorOptions.map(opt => `<option>${opt}</option>`).join('')}
-                            </select>
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="product-detail">
-                            <span class="product-detail-label">Cor:</span>
-                            <span>${product.color}</span>
-                        </div>
-                    `;
-                }
-                
                 // Preço
-                if(product.price) {
-                    html += `<div class="product-price">Valor: R$ ${product.price}</div>`;
-                } else if(product.basePrice) {
-                    html += `<div class="product-price">Valor: R$ ${product.basePrice} <small>(R$ ${product.discountedPrice} para 2+ unidades)</small></div>`;
+                if (product.basePrice) {
+                    productInfo.innerHTML += `
+                        <div class="product-price-container">
+                            <div class="product-price-discount">
+                                <span class="original-price">R$ ${product.basePrice}</span>
+                                <span class="discounted-price">R$ ${product.discountedPrice}</span>
+                            </div>
+                            <div class="discount-note">(válido para 2+ unidades)</div>
+                        </div>
+                    `;
+                } else {
+                    productInfo.innerHTML += `
+                        <div class="product-price-container">
+                            <div class="product-price">Valor: R$ ${product.price}</div>
+                        </div>
+                    `;
                 }
                 
                 // Botão de adicionar
-                html += `
+                productInfo.innerHTML += `
                     <div class="add-to-cart">
                         <input type="number" id="qty-${product.id}" min="1" value="1">
                         <button onclick="addToCart(${product.id})">Adicionar</button>
                     </div>
                 `;
                 
-                html += `</div>`; // Fecha product-info
-                card.innerHTML = html;
+                card.appendChild(carouselContainer);
+                card.appendChild(productInfo);
                 grid.appendChild(card);
+                
+                // Evento para ampliar imagem
+                carouselContainer.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('carousel-dot')) return;
+                    
+                    const modal = document.createElement('div');
+                    modal.className = 'modal';
+                    modal.onclick = () => modal.remove();
+                    
+                    const img = document.createElement('img');
+                    img.src = product.images[carousels[product.id].currentIndex];
+                    modal.appendChild(img);
+                    
+                    document.body.appendChild(modal);
+                });
+            });
+        }
+
+        function setCarouselPosition(productId, index, event) {
+            event.stopPropagation();
+            const carousel = carousels[productId];
+            carousel.element.style.transform = `translateX(-${index * 100}%)`;
+            carousel.currentIndex = index;
+            
+            // Atualizar dots
+            const dots = carousel.element.parentElement.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
             });
         }
 
@@ -403,52 +543,88 @@
             const product = products.find(p => p.id === productId);
             const qty = parseInt(document.getElementById(`qty-${productId}`).value);
             
-            // Verifica se é Vela Recordação para aplicar desconto
-            let price = product.price || product.basePrice;
-            if(product.id === 4) {
-                const recordacaoCount = cart.filter(item => item.id === 4).reduce((sum, item) => sum + item.qty, 0);
-                if(recordacaoCount + qty >= 2) {
-                    price = product.discountedPrice;
-                    // Atualiza o preço de todas as Velas Recordação no carrinho
-                    cart.filter(item => item.id === 4).forEach(item => {
-                        item.price = product.discountedPrice;
-                    });
-                }
+            // Obter essência e cor selecionadas
+            const essence = product.essenceOptions 
+                ? document.getElementById(`essence-${productId}`).value 
+                : product.essence;
+                
+            const color = product.colorOptions 
+                ? document.getElementById(`color-${productId}`).value 
+                : product.color;
+            
+            // Criar chave única para o item
+            const itemKey = `${productId}-${essence}-${color}`;
+            
+            // Verificar se item já existe no carrinho
+            const existingItemIndex = cart.findIndex(item => item.key === itemKey);
+            
+            if (existingItemIndex >= 0) {
+                // Atualizar quantidade se item já existir
+                cart[existingItemIndex].qty += qty;
+            } else {
+                // Calcular preço (aplicar desconto se for Vela Recordação)
+                let price = product.price || product.basePrice;
+                
+                // Adicionar novo item ao carrinho
+                cart.push({
+                    key: itemKey,
+                    id: productId,
+                    name: product.name,
+                    qty: qty,
+                    price: price,
+                    essence: essence,
+                    color: color,
+                    weight: product.weight
+                });
             }
             
-            const cartItem = {
-                id: productId,
-                name: product.name,
-                qty: qty,
-                price: price,
-                essence: product.essenceOptions ? document.getElementById(`essence-${productId}`).value : product.essence,
-                color: product.colorOptions ? document.getElementById(`color-${productId}`).value : product.color,
-                weight: product.weight
-            };
+            // Atualizar preços da Vela Recordação se necessário
+            if (productId === 4) {
+                updateRecordacaoPrices();
+            }
             
-            cart.push(cartItem);
             updateCart();
-            toggleCart(true); // Expandir o carrinho ao adicionar item
+            toggleCart(true);
+        }
+
+        function updateRecordacaoPrices() {
+            const recordacaoItems = cart.filter(item => item.id === 4);
+            const totalQty = recordacaoItems.reduce((sum, item) => sum + item.qty, 0);
+            const shouldApplyDiscount = totalQty >= 2;
+            const product = products.find(p => p.id === 4);
+            
+            recordacaoItems.forEach(item => {
+                item.price = shouldApplyDiscount ? product.discountedPrice : product.basePrice;
+            });
+        }
+
+        function removeCartItem(index) {
+            const removedItem = cart.splice(index, 1)[0];
+            
+            // Se removemos uma Vela Recordação, precisamos verificar os preços
+            if (removedItem.id === 4) {
+                updateRecordacaoPrices();
+            }
+            
+            updateCart();
         }
 
         function updateCart() {
             const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
             const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
-            document.getElementById('cart-summary').textContent = `${totalItems} ${totalItems === 1 ? 'item' : 'itens'} - R$ ${totalValue}`;
+            document.getElementById('cart-summary').textContent = `${totalItems} ${totalItems === 1 ? 'item' : 'itens'} - R$ ${totalValue.toFixed(2)}`;
             
             const content = document.getElementById('cart-content');
-            content.innerHTML = '';
             
-            if(cart.length === 0) {
-                content.innerHTML = '<div style="padding:20px; text-align:center; color:#888;">Seu carrinho está vazio</div>';
+            if (cart.length === 0) {
+                content.innerHTML = '<div class="cart-empty">Seu carrinho está vazio</div>';
                 return;
             }
             
-            cart.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'cart-item';
-                itemDiv.innerHTML = `
+            content.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <span class="cart-item-remove" onclick="removeCartItem(${index})">✕</span>
                     <div class="cart-item-title">${item.name}</div>
                     <div class="cart-item-detail">
                         <span class="cart-item-label">Essência:</span>
@@ -464,27 +640,26 @@
                     </div>
                     <div class="cart-item-detail">
                         <span class="cart-item-label">Quantidade:</span>
-                        <span>${item.qty} x R$ ${item.price}</span>
+                        <span>${item.qty} × R$ ${item.price.toFixed(2)}</span>
                     </div>
                     <div class="cart-item-detail" style="font-weight:bold; margin-top:5px;">
                         <span class="cart-item-label">Subtotal:</span>
-                        <span>R$ ${item.price * item.qty}</span>
+                        <span>R$ ${(item.price * item.qty).toFixed(2)}</span>
                     </div>
-                `;
-                content.appendChild(itemDiv);
-            });
+                </div>
+            `).join('');
         }
 
         function toggleCart(forceExpand = false) {
             const cartElement = document.getElementById('cart');
             
-            if(forceExpand) {
+            if (forceExpand) {
                 cartElement.classList.remove('collapsed');
                 cartElement.classList.add('expanded');
                 return;
             }
             
-            if(cartElement.classList.contains('collapsed')) {
+            if (cartElement.classList.contains('collapsed')) {
                 cartElement.classList.remove('collapsed');
                 cartElement.classList.add('expanded');
             } else {
@@ -493,39 +668,28 @@
             }
         }
 
-        function clearCart() {
-            cart = [];
-            updateCart();
-        }
-
         function sendOrder() {
-            if(cart.length === 0) {
+            if (cart.length === 0) {
                 alert('Seu carrinho está vazio');
                 return;
             }
             
-            const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            
-            let message = `*Pedido Brilho Alado*%0A%0A`;
-            message += `Cliente: [Seu Nome]%0A`;
-            message += `Telefone: [Seu Telefone]%0A%0A`;
-            message += `*Itens do Pedido*%0A%0A`;
+            let message = "Olá, gostaria de fazer um pedido:\n\n";
             
             cart.forEach(item => {
-                message += `*${item.name}*%0A`;
-                message += `Essência: ${item.essence}%0A`;
-                message += `Cor: ${item.color}%0A`;
-                message += `Peso: ${item.weight}%0A`;
-                message += `Quantidade: ${item.qty}%0A`;
-                message += `Valor unitário: R$ ${item.price}%0A`;
-                message += `Subtotal: R$ ${item.price * item.qty}%0A%0A`;
+                message += `*${item.name}*\n`;
+                message += `Essência: ${item.essence}\n`;
+                message += `Cor: ${item.color}\n`;
+                message += `Quantidade: ${item.qty}\n`;
+                message += `Valor unitário: R$ ${item.price.toFixed(2)}\n`;
+                message += `Subtotal: R$ ${(item.price * item.qty).toFixed(2)}\n\n`;
             });
             
-            message += `*Total do Pedido: R$ ${totalValue}*%0A%0A`;
-            message += `Endereço de entrega:%0A[Seu Endereço Completo]%0A%0A`;
-            message += `Observações:%0A[Alguma observação especial]`;
+            const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            message += `*Total: R$ ${totalValue.toFixed(2)}*`;
             
-            window.open(`https://wa.me/5547991880797?text=${message}`, '_blank');
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/5547991880797?text=${encodedMessage}`, '_blank');
         }
 
         // Inicialização
