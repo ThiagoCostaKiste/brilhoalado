@@ -26,24 +26,88 @@
             line-height: 1.6;
         }
 
-        .header {
+        /* Modal de Boas-Vindas */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .welcome-logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-modal h2 {
+            color: #6D8B9B;
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+
+        .welcome-modal p {
+            max-width: 500px;
+            margin-bottom: 30px;
+            color: #5A5A5A;
+            line-height: 1.5;
+        }
+
+        .btn-entendi {
             background-color: var(--cor-destaque);
-            padding: 30px 20px;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            color: var(--cor-texto);
+            transition: all 0.3s;
+        }
+
+        .btn-entendi:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Cabeçalho Aprimorado */
+        .header {
+            background: linear-gradient(135deg, #B0E0E6 0%, #E3F6FC 100%);
+            padding: 40px 20px 30px;
             text-align: center;
             margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .header-logo {
+            width: 120px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
         }
 
         .header h1 {
             color: #4A6B7B;
             margin: 0;
-            font-size: 2.2em;
+            font-size: 2.5em;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .header p {
             font-size: 1.1em;
             max-width: 600px;
-            margin: 10px auto 0;
+            margin: 15px auto 0;
             color: #5A5A5A;
+            line-height: 1.5;
         }
 
         .container {
@@ -71,13 +135,14 @@
 
         .product-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        /* Carrossel com Setas */
         .carousel-container {
             position: relative;
             height: 220px;
             overflow: hidden;
-            cursor: pointer;
             background: #f9f9f9;
         }
 
@@ -91,6 +156,36 @@
             min-width: 100%;
             height: 100%;
             object-fit: contain;
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.8);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .carousel-container:hover .carousel-arrow {
+            opacity: 1;
+        }
+
+        .carousel-prev {
+            left: 15px;
+        }
+
+        .carousel-next {
+            right: 15px;
         }
 
         .carousel-nav {
@@ -213,6 +308,7 @@
             font-size: 0.9em;
         }
 
+        /* Carrinho */
         .cart {
             position: fixed;
             bottom: 30px;
@@ -308,6 +404,7 @@
             background-color: #9BD1D9;
         }
 
+        /* Modal de Imagem */
         .modal {
             position: fixed;
             top: 0;
@@ -343,17 +440,29 @@
     </style>
 </head>
 <body>
+    <!-- Modal de Boas-Vindas -->
+    <div class="welcome-modal" id="welcomeModal">
+        <img src="Logo.png" class="welcome-logo" alt="Brilho Alado">
+        <h2>Bem-vindo à Brilho Alado!</h2>
+        <p>Agradecemos sua visita! Nossas velas são 100% artesanais. Algumas podem ser personalizadas em cor e essência, outras mantêm sua identidade única. Cada peça é especial e pode apresentar variações naturais no acabamento - é parte do seu charme artesanal!</p>
+        <button onclick="closeWelcome()" class="btn-entendi">Entendi</button>
+    </div>
+
+    <!-- Cabeçalho Aprimorado -->
     <div class="header">
+        <img src="Logo.png" class="header-logo" alt="Logo Brilho Alado">
         <h1>Brilho Alado</h1>
         <p>Ilumine seus momentos com a magia das nossas velas artesanais, feitas com amor para transformar ambientes e acender emoções</p>
     </div>
 
+    <!-- Container de Produtos -->
     <div class="container">
         <div class="product-grid" id="products">
             <!-- Produtos serão renderizados via JavaScript -->
         </div>
     </div>
 
+    <!-- Carrinho -->
     <div class="cart collapsed" id="cart">
         <div class="cart-header" onclick="toggleCart()">
             <span>🛒 Carrinho</span>
@@ -431,21 +540,49 @@
                     carousel.innerHTML += `<img src="${img}" alt="${product.name}" data-index="${index}">`;
                 });
                 
+                // Setas do carrossel
+                const prevArrow = document.createElement('button');
+                prevArrow.className = 'carousel-arrow carousel-prev';
+                prevArrow.innerHTML = '❮';
+                prevArrow.onclick = (e) => {
+                    e.stopPropagation();
+                    moveCarousel(product.id, -1);
+                };
+                
+                const nextArrow = document.createElement('button');
+                nextArrow.className = 'carousel-arrow carousel-next';
+                nextArrow.innerHTML = '❯';
+                nextArrow.onclick = (e) => {
+                    e.stopPropagation();
+                    moveCarousel(product.id, 1);
+                };
+                
+                // Dots de navegação
                 const dots = document.createElement('div');
                 dots.className = 'carousel-nav';
                 
                 product.images.forEach((_, index) => {
-                    dots.innerHTML += `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}" onclick="setCarouselPosition(${product.id}, ${index}, event)"></div>`;
+                    const dot = document.createElement('div');
+                    dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+                    dot.dataset.index = index;
+                    dot.onclick = (e) => {
+                        e.stopPropagation();
+                        setCarouselPosition(product.id, index);
+                    };
+                    dots.appendChild(dot);
                 });
                 
                 carouselContainer.appendChild(carousel);
+                carouselContainer.appendChild(prevArrow);
+                carouselContainer.appendChild(nextArrow);
                 carouselContainer.appendChild(dots);
                 
                 // Armazenar referência do carrossel
                 carousels[product.id] = {
                     element: carousel,
                     currentIndex: 0,
-                    totalItems: product.images.length
+                    totalItems: product.images.length,
+                    dots: dots.children
                 };
                 
                 // Info do produto
@@ -486,7 +623,7 @@
                                 <span class="original-price">R$ ${product.basePrice}</span>
                                 <span class="discounted-price">R$ ${product.discountedPrice}</span>
                             </div>
-                            <div class="discount-note">(válido para 2+ unidades)</div>
+                            <div class="discount-note">válido para 2+ unidades</div>
                         </div>
                     `;
                 } else {
@@ -511,7 +648,8 @@
                 
                 // Evento para ampliar imagem
                 carouselContainer.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('carousel-dot')) return;
+                    if (e.target.classList.contains('carousel-arrow') || 
+                        e.target.classList.contains('carousel-dot')) return;
                     
                     const modal = document.createElement('div');
                     modal.className = 'modal';
@@ -526,15 +664,19 @@
             });
         }
 
-        function setCarouselPosition(productId, index, event) {
-            event.stopPropagation();
+        function moveCarousel(productId, direction) {
+            const carousel = carousels[productId];
+            const newIndex = (carousel.currentIndex + direction + carousel.totalItems) % carousel.totalItems;
+            setCarouselPosition(productId, newIndex);
+        }
+
+        function setCarouselPosition(productId, index) {
             const carousel = carousels[productId];
             carousel.element.style.transform = `translateX(-${index * 100}%)`;
             carousel.currentIndex = index;
             
             // Atualizar dots
-            const dots = carousel.element.parentElement.querySelectorAll('.carousel-dot');
-            dots.forEach((dot, i) => {
+            Array.from(carousel.dots).forEach((dot, i) => {
                 dot.classList.toggle('active', i === index);
             });
         }
@@ -666,6 +808,10 @@
                 cartElement.classList.remove('expanded');
                 cartElement.classList.add('collapsed');
             }
+        }
+
+        function closeWelcome() {
+            document.getElementById('welcomeModal').style.display = 'none';
         }
 
         function sendOrder() {
