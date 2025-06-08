@@ -577,7 +577,18 @@
                 price: 50,
                 essence: "Flor de Cerejeira",
                 color: "Fixo"
-            }    
+            },
+            {
+                id: 12,
+                name: "Vela Lembrancinha",
+                images: ["Vela_Lembrancinha.jpg"],
+                weight: "30g",
+                price: 11,
+                essenceOptions: ["Algodão", "Baunilha", "Capim Limão", "Lavanda Francesa", "Morango", "Rosas"], // você pode ajustar a lista conforme suas opções
+                colorOptions: ["Azul", "Rosa", "Branco", "Verde", "Amarelo"],
+                description: "Essa vela pode ter sua tag ou adesivo personalizado com uma mensagem ou nome, entre em contato"    
+            }
+
         ];
 
         let cart = [];
@@ -652,6 +663,14 @@
                 const productInfo = document.createElement('div');
                 productInfo.className = 'product-info';
                 
+               if (product.description) {
+                const descriptionEl = document.createElement('p');
+                descriptionEl.style.fontSize = '0.9em';
+                descriptionEl.style.marginBottom = '10px';
+                descriptionEl.textContent = product.description;
+                productInfo.appendChild(descriptionEl);
+                }
+
                 productInfo.innerHTML = `
                     <h3 class="product-title">${product.name}</h3>
                     <div class="product-detail">
