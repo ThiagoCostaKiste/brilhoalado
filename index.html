@@ -672,30 +672,31 @@
                 }
 
                 productInfo.innerHTML = `
-                    <h3 class="product-title">${product.name}</h3>
-                    <div class="product-detail">
-                        <span class="product-detail-label">Peso:</span>
-                        <span>${product.weight}</span>
-                    </div>
-                    <div class="product-detail">
-                        <span class="product-detail-label">Essência:</span>
-                        ${product.essenceOptions ? 
-                            `<select id="essence-${product.id}">
-                                ${product.essenceOptions.map(opt => `<option>${opt}</option>`).join('')}
-                            </select>` : 
-                            `<span>${product.essence}</span>`
-                        }
-                    </div>
-                    <div class="product-detail">
-                        <span class="product-detail-label">Cor:</span>
-                        ${product.colorOptions ? 
-                            `<select id="color-${product.id}">
-                                ${product.colorOptions.map(opt => `<option>${opt}</option>`).join('')}
-                            </select>` : 
-                            `<span>${product.color}</span>`
-                        }
-                    </div>
-                `;
+    <h3 class="product-title">${product.name}</h3>
+    ${product.description ? `<p style="font-size: 0.9em; margin-bottom: 10px;">${product.description}</p>` : ''}
+    <div class="product-detail">
+        <span class="product-detail-label">Peso:</span>
+        <span>${product.weight}</span>
+    </div>
+    <div class="product-detail">
+        <span class="product-detail-label">Essência:</span>
+        ${product.essenceOptions ? 
+            `<select id="essence-${product.id}">
+                ${product.essenceOptions.map(opt => `<option>${opt}</option>`).join('')}
+            </select>` : 
+            `<span>${product.essence}</span>`
+        }
+    </div>
+    <div class="product-detail">
+        <span class="product-detail-label">Cor:</span>
+        ${product.colorOptions ? 
+            `<select id="color-${product.id}">
+                ${product.colorOptions.map(opt => `<option>${opt}</option>`).join('')}
+            </select>` : 
+            `<span>${product.color}</span>`
+        }
+    </div>
+`;
                 
                 // Preço
                 if (product.basePrice) {
